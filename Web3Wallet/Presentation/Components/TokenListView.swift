@@ -31,7 +31,7 @@ class TokenListView: UIView {
         backgroundColor = UIColor.clear
         
         // Setup title
-        titleLabel.text = "代币"
+        titleLabel.text = "Token"
         titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
         titleLabel.textColor = UIColor.white
         

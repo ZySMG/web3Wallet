@@ -81,7 +81,7 @@ class WalletHomeViewController: UIViewController {
         setupNetworkButton()
         
         // Setup token list title
-        tokenListTitleLabel.text = "我的资产"
+        tokenListTitleLabel.text = "My Assets"
         tokenListTitleLabel.font = UIFont.boldSystemFont(ofSize: 18)
         tokenListTitleLabel.textColor = UIColor.label
         

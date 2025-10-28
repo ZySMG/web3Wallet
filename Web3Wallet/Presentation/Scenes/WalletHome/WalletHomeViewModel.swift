@@ -247,9 +247,9 @@ class WalletHomeViewModel {
                         let filteredBalances = updatedBalances.filter { balance in
                             let alwaysShowSymbols = ["ETH", "USDC", "USDT"]
                             if alwaysShowSymbols.contains(balance.currency.symbol) {
-                                return true // ETH、USDC、USDT始终显示，包括0余额
+                                return true // ETH, USDC, and USDT are always displayed, including a balance of 0
                             }
-                            return balance.amount > 0 // 其他代币只显示非零余额
+                            return balance.amount > 0 // Other tokens only show non-zero balances
                         }
                         
                         balancesSubject.accept(filteredBalances)
