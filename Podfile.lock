@@ -1,0 +1,42 @@
+PODS:
+  - Alamofire (5.10.2)
+  - RxCocoa (6.9.0):
+    - RxRelay (= 6.9.0)
+    - RxSwift (= 6.9.0)
+  - RxRelay (6.9.0):
+    - RxSwift (= 6.9.0)
+  - RxSwift (6.9.0)
+  - TrustWalletCore (4.3.19):
+    - TrustWalletCore/Core (= 4.3.19)
+  - TrustWalletCore/Core (4.3.19):
+    - TrustWalletCore/Types
+  - TrustWalletCore/Types (4.3.19):
+    - WalletCoreSwiftProtobuf
+  - WalletCoreSwiftProtobuf (1.29.0)
+
+DEPENDENCIES:
+  - Alamofire (~> 5.0)
+  - RxCocoa (~> 6.0)
+  - RxSwift (~> 6.0)
+  - TrustWalletCore
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - RxCocoa
+    - RxRelay
+    - RxSwift
+    - TrustWalletCore
+    - WalletCoreSwiftProtobuf
+
+SPEC CHECKSUMS:
+  Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
+  RxCocoa: ac16414696ae706516be3e1ab00fcce5bdc9be8a
+  RxRelay: 6b0c930e5cef57d5fe2032571e5e65b78e3cbdb1
+  RxSwift: 31649ace6aceeb422e16ff71c60804f9c3281ed9
+  TrustWalletCore: 85fe1201456406e0f170bb1564f90054bcc6d190
+  WalletCoreSwiftProtobuf: a4798576a2d309511fc45f81843d348732ec571d
+
+PODFILE CHECKSUM: f8bd11250e4ac43819b69e7fc172fa43faa3f36a
+
+COCOAPODS: 1.16.2
