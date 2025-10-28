@@ -23,7 +23,7 @@ extension String {
     }
 }
 
-/// 发送页面视图控制器
+/// Send page view controller
 class SendViewController: UIViewController {
     
     var viewModel: SendViewModel!
@@ -435,14 +435,14 @@ class SendViewController: UIViewController {
     // MARK: - Gas Countdown Methods
     
     private func startGasCountdown() {
-        // 停止之前的倒计时
+        // Stop previous countdown
         stopGasCountdown()
         
-        // 重置倒计时
+        // Reset countdown
         gasCountdownSeconds = 5
         updateCountdownUI()
         
-        // 启动新的倒计时
+        // Start new countdown
         gasCountdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             
@@ -466,11 +466,11 @@ class SendViewController: UIViewController {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
-            // 更新圆形进度条
+            // Update circular progress bar
             let progress = Float(5 - self.gasCountdownSeconds) / 5.0
             self.circularProgressView.progress = progress
             
-            // 更新倒计时文本
+            // Update countdown text
             if self.gasCountdownSeconds > 0 {
                 self.gasCountdownLabel.text = "Gas will refresh in \(self.gasCountdownSeconds)s"
                 self.circularProgressView.countdownText = "\(self.gasCountdownSeconds)"
@@ -523,11 +523,11 @@ class SendViewController: UIViewController {
             self.viewModel.gasLimitSubject.accept("Gas Limit: \(gasEstimate.gasLimit)")
             self.viewModel.feeSubject.accept("Network Fee: \(gasEstimate.formattedFee)")
             
-            // 重新启动倒计时
+            // Restart countdown
             self.startGasCountdown()
         }, onError: { [weak self] error in
             self?.viewModel.errorSubject.accept(error)
-            // 即使出错也重新启动倒计时
+            // Restart countdown even if error occurs
             self?.startGasCountdown()
         })
         .disposed(by: viewModel.disposeBag)
@@ -555,7 +555,7 @@ class SendViewController: UIViewController {
             return
         }
         
-        // ✅ 先检查网络连接状态
+        // ✅ Check network connection status first
         checkNetworkStatus { [weak self] isConnected, isAirplaneMode in
             guard let self = self else { return }
             
@@ -573,12 +573,12 @@ class SendViewController: UIViewController {
                 return
             }
             
-            // ✅ 网络正常，检查 ETH 余额是否足够支付 Gas 费用
+            // ✅ Network is normal, check if ETH balance is sufficient to pay gas fees
             self.checkETHBalanceForGasFee { [weak self] hasEnoughETH, ethBalance in
                 guard let self = self else { return }
                 
                 if !hasEnoughETH {
-                    // ✅ 显示 ETH 余额不足的弹窗提示
+                    // ✅ Show insufficient ETH balance alert
                     let errorMessage = (ethBalance ?? 0) == 0 ?
                         "No ETH balance. Please deposit some ETH to pay for gas fees." :
                         "Insufficient ETH balance to pay gas fees. Please deposit more ETH."
@@ -595,7 +595,7 @@ class SendViewController: UIViewController {
                     return
                 }
                 
-                // ✅ ETH 余额充足，显示确认弹窗
+                // ✅ ETH balance is sufficient, show confirmation alert
                 DispatchQueue.main.async {
                     self.showConfirmationAlert(toAddress: toAddress, amount: amount, amountString: amountString)
                 }
@@ -740,20 +740,20 @@ class SendViewController: UIViewController {
                 return
             }
             
-            // ✅ 使用真正的交易发送而不是模拟
+            // ✅ Use real transaction sending instead of simulation
             guard let gasEstimate = self.viewModel.currentGasEstimateSubject.value else {
                 self.progressViewController?.updateStatus(.failed(error: WalletError.networkError("Gas estimate not available")))
                 return
             }
             
-            // 获取助记词
+            // Get mnemonic
             let keychainStorage = KeychainStorageService()
             guard let mnemonic = keychainStorage.retrieve(key: "mnemonic_\(self.viewModel.wallet.address)") else {
                 self.progressViewController?.updateStatus(.failed(error: WalletError.networkError("Mnemonic not found")))
                 return
             }
             
-            // 发送真正的交易
+            // Send real transaction
             self.viewModel.sendTransactionUseCase.sendTransaction(
                 from: self.viewModel.wallet,
                 to: address,
@@ -764,14 +764,14 @@ class SendViewController: UIViewController {
             )
             .subscribe(
                 onNext: { [weak self] txHash in
-                    // ✅ 更新状态为成功
+                    // ✅ Update status to success
                     self?.progressViewController?.updateStatus(.success(txHash: txHash))
                     
-                    // ✅ 显示成功后的操作选项
+                    // ✅ Show success action options
                     self?.showSuccessOptions(txHash: txHash)
                 },
                 onError: { [weak self] error in
-                    // ✅ 更新状态为失败
+                    // ✅ Update status to failed
                     self?.progressViewController?.updateStatus(.failed(error: error))
                 }
             )
@@ -805,12 +805,12 @@ class SendViewController: UIViewController {
                 }
             })
             
-            // 跳转到交易记录
+            // Navigate to transaction history
             alert.addAction(UIAlertAction(title: "View Transaction History", style: .default) { _ in
                 self.goToHistory()
             })
             
-            // 关闭进度页面
+            // Close progress page
             alert.addAction(UIAlertAction(title: "Close", style: .cancel) { _ in
                 self.dismissProgressPage()
             })
@@ -925,14 +925,14 @@ class CircularProgressView: UIView {
     private func setupView() {
         backgroundColor = UIColor.clear
         
-        // 设置背景圆环
+        // Setup background circle
         backgroundLayer.fillColor = UIColor.clear.cgColor
         backgroundLayer.strokeColor = UIColor.systemGray5.cgColor
         backgroundLayer.lineWidth = 3
         backgroundLayer.lineCap = .round
         layer.addSublayer(backgroundLayer)
         
-        // 设置进度圆环
+        // Setup progress circle
         progressLayer.fillColor = UIColor.clear.cgColor
         progressLayer.strokeColor = UIColor.systemBlue.cgColor
         progressLayer.lineWidth = 3
@@ -940,7 +940,7 @@ class CircularProgressView: UIView {
         progressLayer.strokeEnd = 0
         layer.addSublayer(progressLayer)
         
-        // 设置倒计时标签
+        // Setup countdown label
         countdownLabel.textAlignment = .center
         countdownLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         countdownLabel.textColor = UIColor.systemBlue

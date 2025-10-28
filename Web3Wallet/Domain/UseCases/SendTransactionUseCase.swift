@@ -10,8 +10,8 @@ import RxSwift
 import WalletCore
 import WalletCoreSwiftProtobuf
 
-// 你工程里已有的协议/类型：EthereumServiceProtocol / Wallet / Currency / GasEstimate / WalletError
-// 本文件负责：派生私钥 -> 获取 nonce / gasPrice -> 构造并签名 -> 广播 -> 返回 txHash
+// Your existing protocols/types: EthereumServiceProtocol / Wallet / Currency / GasEstimate / WalletError
+// This file is responsible for: derive private key -> get nonce / gasPrice -> construct and sign -> broadcast -> return txHash
 
 protocol SendTransactionUseCaseProtocol {
     func sendTransaction(
@@ -31,15 +31,15 @@ final class SendTransactionUseCase: SendTransactionUseCaseProtocol {
         self.ethereumService = ethereumService
     }
 
-    /// 发送交易（原生 ETH / ERC-20）
+    /// Send transaction (native ETH / ERC-20)
     /// - Parameters:
-    ///   - wallet: 包含 sender address & network
-    ///   - address: 收款地址
-    ///   - amount: 转账数量（Decimal）
-    ///   - currency: 当前选择的币（ETH / USDC / USDT(Test)）
-    ///   - gasEstimate: 估算得到的 gasLimit（以及你需要的其它字段）
-    ///   - mnemonic: 助记词（只在本地用于签名）
-    /// - Returns: 上链后返回 txHash（String）
+    ///   - wallet: Contains sender address & network
+    ///   - address: Recipient address
+    ///   - amount: Transfer amount (Decimal)
+    ///   - currency: Currently selected currency (ETH / USDC / USDT(Test))
+    ///   - gasEstimate: Estimated gasLimit (and other fields you need)
+    ///   - mnemonic: Mnemonic phrase (only used locally for signing)
+    /// - Returns: Returns txHash (String) after being on-chain
     func sendTransaction(
         from wallet: Wallet,
         to address: String,
@@ -55,19 +55,19 @@ final class SendTransactionUseCase: SendTransactionUseCaseProtocol {
                 return Disposables.create()
             }
 
-            // 1) 从助记词派生私钥（使用钱包的派生路径）
+            // 1) Derive private key from mnemonic (using wallet's derivation path)
             guard let hd = HDWallet(mnemonic: mnemonic, passphrase: "") else {
                 observer.onError(WalletError.invalidMnemonic)
                 return Disposables.create()
             }
             let privateKey = hd.getKey(coin: .ethereum, derivationPath: "m/44'/60'/0'/0/0")
             
-            // ✅ 添加调试日志
+            // ✅ Add debug logging
             print("🔑 SendTransactionUseCase: Wallet address: \(wallet.address)")
             print("🔑 SendTransactionUseCase: Derivation path: m/44'/60'/0'/0/0")
             print("🔑 SendTransactionUseCase: Private key derived successfully")
 
-            // 2) 获取 nonce(pending) + gasPrice(Gwei)
+            // 2) Get nonce(pending) + gasPrice(Gwei)
             let innerDisposable =
                 Observable.zip(
                     self.ethereumService.getNonce(address: wallet.address, network: wallet.network),
@@ -76,7 +76,7 @@ final class SendTransactionUseCase: SendTransactionUseCaseProtocol {
                 .flatMap { [weak self] (nonce, gasPriceGwei) -> Observable<String> in
                     guard let self = self else { return Observable.error(WalletError.unknown) }
 
-                    // 3) 构造并签名 rawTx（ETH / ERC-20 均支持）
+                    // 3) Construct and sign rawTx (supports both ETH / ERC-20)
                     guard let rawTx = self.buildTransaction(
                         from: wallet.address,
                         to: address,
@@ -91,7 +91,7 @@ final class SendTransactionUseCase: SendTransactionUseCaseProtocol {
                         return Observable.error(WalletError.transactionCreationFailed)
                     }
 
-                    // 4) 广播
+                    // 4) Broadcast
                     return self.ethereumService.sendRawTransaction(rawTransaction: rawTx, network: wallet.network)
                 }
                 .subscribe(onNext: { txHash in
@@ -109,7 +109,7 @@ final class SendTransactionUseCase: SendTransactionUseCaseProtocol {
 
     // MARK: - Build & Sign
 
-    /// 使用 TrustWalletCore 构造并签名交易，返回 raw tx (0x...)
+    /// Use TrustWalletCore to construct and sign transaction, return raw tx (0x...)
     private func buildTransaction(
         from: String,
         to: String,
@@ -122,7 +122,7 @@ final class SendTransactionUseCase: SendTransactionUseCaseProtocol {
         privateKey: PrivateKey
     ) -> String? {
 
-        // 单位换算辅助
+        // Unit conversion helper
         func toUnits(_ value: Decimal, decimals: Int) -> UInt64? {
             let scale = pow(10 as Decimal, decimals)
             let scaled = NSDecimalNumber(decimal: value).multiplying(by: NSDecimalNumber(decimal: scale)).decimalValue
@@ -140,7 +140,7 @@ final class SendTransactionUseCase: SendTransactionUseCaseProtocol {
             return nil
         }
 
-        // 填充工具
+        // Padding helper
         func hex(_ v: UInt64) -> String { String(v, radix: 16) }
         func evenPaddedHex(_ s: String) -> String { s.count % 2 == 0 ? s : ("0" + s) }
         func hexData(_ v: UInt64) -> Data { Data(hexString: evenPaddedHex(String(v, radix: 16))) ?? Data() }
@@ -155,12 +155,12 @@ final class SendTransactionUseCase: SendTransactionUseCaseProtocol {
         input.chainID     = hexDataInt(chainId)
         input.nonce       = hexDataInt(nonce)
         input.gasLimit    = hexData(gasLimitU64)
-        input.gasPrice    = hexData(gasPriceWei)              // 使用 legacy gasPrice（足够测试；未来可切 EIP-1559）
+        input.gasPrice    = hexData(gasPriceWei)              // Use legacy gasPrice (sufficient for testing; can switch to EIP-1559 in future)
 
         var tx = EthereumTransaction()
 
         if let contract = currency.contractAddress, !contract.isEmpty {
-            // === ERC-20 代币转账 ===
+            // === ERC-20 token transfer ===
             input.toAddress = contract
 
             var erc20 = EthereumTransaction.ERC20Transfer()
@@ -170,7 +170,7 @@ final class SendTransactionUseCase: SendTransactionUseCaseProtocol {
             erc20.amount = Data(hexString: tokenHex) ?? Data()
             tx.erc20Transfer = erc20
         } else {
-            // === 原生 ETH 转账 ===
+            // === Native ETH transfer ===
             input.toAddress = to
             guard let amountWei = toUnits(amount, decimals: 18) else { return nil }
             var transfer = EthereumTransaction.Transfer()
@@ -180,7 +180,7 @@ final class SendTransactionUseCase: SendTransactionUseCaseProtocol {
 
         input.transaction = tx
 
-        // 签名
+        // Sign
         let output: EthereumSigningOutput = AnySigner.sign(input: input, coin: .ethereum)
         let raw = "0x" + output.encoded.hexString
         return raw

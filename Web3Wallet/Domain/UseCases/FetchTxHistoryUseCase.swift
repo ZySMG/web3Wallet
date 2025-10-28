@@ -9,8 +9,8 @@
 import Foundation
 import RxSwift
 
-/// 获取交易历史用例
-/// 负责获取钱包的交易记录
+/// Fetch transaction history use case
+/// Responsible for fetching wallet transaction records
 protocol FetchTxHistoryUseCaseProtocol {
     func fetchTransactionHistory(for wallet: Wallet, limit: Int) -> Observable<[Transaction]>
 }
@@ -28,15 +28,15 @@ class FetchTxHistoryUseCase: FetchTxHistoryUseCaseProtocol {
     func fetchTransactionHistory(for wallet: Wallet, limit: Int = 10) -> Observable<[Transaction]> {
         let cacheKey = "tx_history_\(wallet.address)_\(wallet.network.chainId)_\(limit)"
         
-        // 检查缓存
+        // Check cache
         if let cachedTransactions: [Transaction] = cacheService.get(key: cacheKey) {
             return Observable.just(cachedTransactions)
         }
         
-        // 获取交易历史
+        // Fetch transaction history
         return txService.getTransactionHistory(address: wallet.address, network: wallet.network, limit: limit)
             .do(onNext: { transactions in
-                // 缓存结果
+                // Cache results
                 self.cacheService.set(key: cacheKey, value: transactions, ttl: 90) // 90秒缓存
             })
     }

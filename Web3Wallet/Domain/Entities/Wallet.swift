@@ -8,8 +8,8 @@
 
 import Foundation
 
-/// 钱包实体
-/// 包含钱包的基本信息和状态
+/// Wallet entity
+/// Contains basic wallet information and status
 struct Wallet: Equatable, Codable {
     let id: String
     let name: String
@@ -19,12 +19,12 @@ struct Wallet: Equatable, Codable {
     let isImported: Bool
     let fingerprint: String
     
-    /// 钱包显示名称
+    /// Wallet display name
     var displayName: String {
         return name.isEmpty ? "Wallet \(id.prefix(8))" : name
     }
     
-    /// 格式化的地址显示
+    /// Formatted address display
     var formattedAddress: String {
         return formatAddress(address)
     }

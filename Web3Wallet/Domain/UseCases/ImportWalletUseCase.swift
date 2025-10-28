@@ -10,8 +10,8 @@ import Foundation
 import RxSwift
 import WalletCore
 
-/// 导入钱包用例
-/// 负责从助记词导入现有钱包
+/// Import wallet use case
+/// Responsible for importing existing wallet from mnemonic phrase
 protocol ImportWalletUseCaseProtocol {
     func importWallet(from mnemonic: String, network: Network) -> Observable<Wallet>
 }
@@ -67,7 +67,7 @@ class ImportWalletUseCase: ImportWalletUseCaseProtocol {
                     fingerprint: address.description
                 )
                 
-                // ✅ 保存助记词到Keychain
+                // ✅ Save mnemonic to Keychain
                 let keychainStorage = KeychainStorageService()
                 _ = keychainStorage.store(key: "mnemonic_\(address.description)", value: mnemonic)
                 

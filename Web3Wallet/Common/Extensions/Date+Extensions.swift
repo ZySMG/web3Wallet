@@ -10,21 +10,21 @@ import Foundation
 
 extension Date {
     
-    /// 格式化为相对时间显示
+    /// Format as relative time display
     var relativeTimeString: String {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
         return formatter.localizedString(for: self, relativeTo: Date())
     }
     
-    /// 格式化为简短相对时间显示
+    /// Format as short relative time display
     var shortRelativeTimeString: String {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .short
         return formatter.localizedString(for: self, relativeTo: Date())
     }
     
-    /// 格式化为日期时间字符串
+    /// Format as date-time string
     var dateTimeString: String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -32,7 +32,7 @@ extension Date {
         return formatter.string(from: self)
     }
     
-    /// 格式化为日期字符串
+    /// Format as date string
     var dateString: String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium

@@ -8,19 +8,19 @@
 
 import Foundation
 
-/// 地址验证器协议
+/// Address validator protocol
 protocol AddressValidatorProtocol {
     func isValid(_ address: String) -> Bool
     func isValidEIP55(_ address: String) -> Bool
     func normalizeAddress(_ address: String) -> String?
 }
 
-/// 地址验证器
-/// 负责验证以太坊地址的有效性
+/// Address validator
+/// Responsible for validating Ethereum addresses
 class AddressValidator: AddressValidatorProtocol {
     
     func isValid(_ address: String) -> Bool {
-        // 基本格式验证：0x + 40个十六进制字符
+        // Basic format validation: 0x + 40 hexadecimal characters
         let trimmedAddress = address.trimmingCharacters(in: .whitespacesAndNewlines)
         
         guard trimmedAddress.hasPrefix("0x") else { return false }
@@ -33,11 +33,11 @@ class AddressValidator: AddressValidatorProtocol {
     func isValidEIP55(_ address: String) -> Bool {
         guard isValid(address) else { return false }
         
-        // EIP-55 校验和验证
+        // EIP-55 checksum validation
         let trimmedAddress = address.trimmingCharacters(in: .whitespacesAndNewlines)
         let hexPart = String(trimmedAddress.dropFirst(2))
         
-        // 计算校验和
+        // Calculate checksum
         let hash = hexPart.lowercased().data(using: .utf8)?.sha3_256() ?? Data()
         let hashHex = hash.map { String(format: "%02x", $0) }.joined()
         
@@ -62,29 +62,29 @@ class AddressValidator: AddressValidatorProtocol {
         return trimmedAddress.lowercased()
     }
     
-    /// 获取地址验证错误信息
+    /// Get address validation error message
     func getValidationError(_ address: String) -> String? {
         let trimmedAddress = address.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if trimmedAddress.isEmpty {
-            return "地址不能为空"
+            return "Address cannot be empty"
         }
         
         if !trimmedAddress.hasPrefix("0x") {
-            return "地址必须以 0x 开头"
+            return "Address must start with 0x"
         }
         
         if trimmedAddress.count != 42 {
-            return "地址长度必须为 42 个字符"
+            return "Address length must be 42 characters"
         }
         
         let hexPart = String(trimmedAddress.dropFirst(2))
         if !hexPart.allSatisfy({ $0.isHexDigit }) {
-            return "地址包含无效字符"
+            return "Address contains invalid characters"
         }
         
         if !isValidEIP55(address) {
-            return "地址校验和验证失败"
+            return "Address checksum validation failed"
         }
         
         return nil
@@ -101,8 +101,8 @@ extension Character {
 
 extension Data {
     func sha3_256() -> Data {
-        // 这里应该使用实际的 SHA3-256 实现
-        // 为了简化，我们使用 SHA256 作为替代
+        // Here should use actual SHA3-256 implementation
+        // For simplification, we use SHA256 as replacement
         var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
         self.withUnsafeBytes { bytes in
             CC_SHA256(bytes.bindMemory(to: UInt8.self).baseAddress, CC_LONG(self.count), &hash)

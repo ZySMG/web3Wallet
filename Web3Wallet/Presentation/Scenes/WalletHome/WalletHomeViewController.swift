@@ -27,7 +27,7 @@ class WalletHomeViewController: UIViewController {
     private let balanceLabel = UILabel()
     private let actionButtonsStackView = UIStackView()
     private let receiveButton = UIButton(type: .system)
-    let sendButton = UIButton(type: .system) // 改为public以便Coordinator访问
+    let sendButton = UIButton(type: .system) // Changed to public for Coordinator access
     private let transactionButton = UIButton(type: .system)
     private let networkButton = UIButton(type: .system)
     private let tokenListTitleLabel = UILabel()
@@ -42,10 +42,10 @@ class WalletHomeViewController: UIViewController {
     }
     
     private func setupUI() {
-        // 设置背景色
+        // Set background color
         view.backgroundColor = UIColor.systemBackground
         
-        // 设置滚动视图
+        // Setup scroll view
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.refreshControl = refreshControl
         view.addSubview(scrollView)
@@ -53,19 +53,19 @@ class WalletHomeViewController: UIViewController {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(contentView)
         
-        // 设置标题
+        // Setup title
         titleLabel.text = "Web3Wallet"
         titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
         titleLabel.textAlignment = .center
         titleLabel.textColor = UIColor.label
         
-        // 设置账户按钮
+        // Setup account button
         accountButton.setTitle("账户 1", for: .normal)
         accountButton.setTitleColor(UIColor.systemBlue, for: .normal)
         accountButton.backgroundColor = UIColor.systemGray6
         accountButton.layer.cornerRadius = 8
         
-        // 设置余额卡片
+        // Setup balance card
         balanceCardView.backgroundColor = UIColor.systemBlue
         balanceCardView.layer.cornerRadius = 16
         
@@ -74,18 +74,18 @@ class WalletHomeViewController: UIViewController {
         balanceLabel.textColor = UIColor.white
         balanceLabel.textAlignment = .center
         
-        // 设置操作按钮
+        // Setup action buttons
         setupActionButtons()
         
-        // 设置网络按钮
+        // Setup network button
         setupNetworkButton()
         
-        // 设置代币列表标题
+        // Setup token list title
         tokenListTitleLabel.text = "我的资产"
         tokenListTitleLabel.font = UIFont.boldSystemFont(ofSize: 18)
         tokenListTitleLabel.textColor = UIColor.label
         
-        // 添加子视图
+        // Add subviews
         contentView.addSubview(titleLabel)
         contentView.addSubview(accountButton)
         contentView.addSubview(balanceCardView)
@@ -95,7 +95,7 @@ class WalletHomeViewController: UIViewController {
         contentView.addSubview(tokenListTitleLabel)
         contentView.addSubview(tokenListView)
         
-        // 设置约束
+        // Setup constraints
         setupConstraints()
     }
     
@@ -145,7 +145,7 @@ class WalletHomeViewController: UIViewController {
         networkButton.contentHorizontalAlignment = .left
         networkButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
         
-        // 添加箭头图标
+        // Add arrow icon
         let arrowImageView = UIImageView(image: UIImage(systemName: "chevron.down"))
         arrowImageView.tintColor = UIColor.systemGray
         arrowImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -165,57 +165,57 @@ class WalletHomeViewController: UIViewController {
         }
         
         NSLayoutConstraint.activate([
-            // 滚动视图约束
+            // Scroll view constraints
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            // 内容视图约束
+            // Content view constraints
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             
-            // 标题约束
+            // Title constraints
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             
-            // 账户按钮约束
+            // Account button constraints
             accountButton.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
             accountButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             accountButton.widthAnchor.constraint(equalToConstant: 80),
             accountButton.heightAnchor.constraint(equalToConstant: 36),
             
-            // 余额卡片约束
+            // Balance card constraints
             balanceCardView.topAnchor.constraint(equalTo: accountButton.bottomAnchor, constant: 20),
             balanceCardView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             balanceCardView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             balanceCardView.heightAnchor.constraint(equalToConstant: 80),
             
-            // 余额标签约束
+            // Balance label constraints
             balanceLabel.centerXAnchor.constraint(equalTo: balanceCardView.centerXAnchor),
             balanceLabel.centerYAnchor.constraint(equalTo: balanceCardView.centerYAnchor),
             
-            // 操作按钮约束
+            // Action buttons constraints
             actionButtonsStackView.topAnchor.constraint(equalTo: balanceCardView.bottomAnchor, constant: 20),
             actionButtonsStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             actionButtonsStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             
-            // 网络按钮约束
+            // Network button constraints
             networkButton.topAnchor.constraint(equalTo: actionButtonsStackView.bottomAnchor, constant: 16),
             networkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             networkButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             networkButton.heightAnchor.constraint(equalToConstant: 44),
             
-            // 代币列表标题约束
+            // Token list title constraints
             tokenListTitleLabel.topAnchor.constraint(equalTo: networkButton.bottomAnchor, constant: 20),
             tokenListTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             tokenListTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             
-            // 代币列表约束
+            // Token list constraints
             tokenListView.topAnchor.constraint(equalTo: tokenListTitleLabel.bottomAnchor, constant: 10),
             tokenListView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             tokenListView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
@@ -225,44 +225,44 @@ class WalletHomeViewController: UIViewController {
     }
     
     private func bindViewModel() {
-        // 绑定刷新
+        // Bind refresh
         refreshControl.rx.controlEvent(.valueChanged)
             .bind(to: viewModel.input.refreshTrigger)
             .disposed(by: disposeBag)
         
-        // 绑定余额
+        // Bind balance
         viewModel.output.totalBalance
             .drive(balanceLabel.rx.text)
             .disposed(by: disposeBag)
         
-        // 绑定代币列表
+        // Bind token list
         viewModel.output.balances
             .drive(tokenListView.rx.balances)
             .disposed(by: disposeBag)
         
-        // 绑定当前网络
+        // Bind current network
         viewModel.output.currentNetwork
             .drive(networkButton.rx.title(for: .normal))
             .disposed(by: disposeBag)
         
-        // 绑定账户名称
+        // Bind account name
         viewModel.output.accountName
             .drive(accountButton.rx.title(for: .normal))
             .disposed(by: disposeBag)
         
-        // 绑定加载状态
+        // Bind loading state
         viewModel.output.isLoading
             .drive(refreshControl.rx.isRefreshing)
             .disposed(by: disposeBag)
         
-        // 绑定错误
+        // Bind errors
         viewModel.output.error
             .drive(onNext: { [weak self] error in
                 self?.showErrorAlert(error.localizedDescription)
             })
             .disposed(by: disposeBag)
         
-        // 绑定导航事件
+        // Bind navigation events
         viewModel.output.showSend
             .drive(onNext: { [weak self] wallet in
                 self?.showSend(wallet: wallet)
@@ -287,12 +287,12 @@ class WalletHomeViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        // 绑定按钮事件
+        // Bind button events
         receiveButton.rx.tap
             .bind(to: viewModel.input.receiveTrigger)
             .disposed(by: disposeBag)
         
-        // Send按钮绑定已移至WalletCoordinator中处理，避免重复导航
+        // Send button binding has been moved to WalletCoordinator to avoid duplicate navigation
         
         transactionButton.rx.tap
             .bind(to: viewModel.input.transactionTrigger)
@@ -306,7 +306,7 @@ class WalletHomeViewController: UIViewController {
             .bind(to: viewModel.input.walletManagementTrigger)
             .disposed(by: disposeBag)
         
-        // 监听钱包切换通知
+        // Listen to wallet switching notifications
         NotificationCenter.default.rx
             .notification(.walletSwitched)
             .compactMap { $0.object as? Wallet }
@@ -343,7 +343,7 @@ class WalletHomeViewController: UIViewController {
         let txService = TxService(networkService: NetworkService())
         let cacheService = CacheService()
         
-        // ✅ 使用WalletManagerSingleton的当前钱包，而不是传入的wallet
+        // ✅ Use WalletManagerSingleton's current wallet instead of the passed wallet
         guard let currentWallet = WalletManagerSingleton.shared.currentWalletSubject.value else {
             print("❌ No current wallet found in WalletManagerSingleton")
             return

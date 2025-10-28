@@ -9,7 +9,7 @@
 import Foundation
 import os.log
 
-/// 日志级别
+/// Log level
 enum LogLevel: String, CaseIterable {
     case debug = "DEBUG"
     case info = "INFO"
@@ -30,7 +30,7 @@ enum LogLevel: String, CaseIterable {
     }
 }
 
-/// 日志工具类
+/// Logger utility class
 class Logger {
     
     private static let subsystem = Bundle.main.bundleIdentifier ?? "Web3Wallet"
@@ -38,38 +38,38 @@ class Logger {
     
     private static let osLog = OSLog(subsystem: subsystem, category: category)
     
-    /// 敏感字段列表（这些字段的值会被屏蔽）
+    /// List of sensitive fields (values of these fields will be masked)
     private static let sensitiveFields = [
         "mnemonic", "seed", "privateKey", "password", "pin",
         "token", "key", "secret", "auth", "credential"
     ]
     
-    /// 记录调试日志
+    /// Log debug message
     static func debug(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         log(level: .debug, message: message, file: file, function: function, line: line)
     }
     
-    /// 记录信息日志
+    /// Log info message
     static func info(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         log(level: .info, message: message, file: file, function: function, line: line)
     }
     
-    /// 记录警告日志
+    /// Log warning message
     static func warning(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         log(level: .warning, message: message, file: file, function: function, line: line)
     }
     
-    /// 记录错误日志
+    /// Log error message
     static func error(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         log(level: .error, message: message, file: file, function: function, line: line)
     }
     
-    /// 记录错误日志（带错误对象）
+    /// Log error message (with error object)
     static func error(_ error: Error, file: String = #file, function: String = #function, line: Int = #line) {
         log(level: .error, message: error.localizedDescription, file: file, function: function, line: line)
     }
     
-    /// 记录网络请求日志
+    /// Log network request
     static func network(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         #if DEBUG
         let networkLog = OSLog(subsystem: subsystem, category: "Network")
@@ -79,7 +79,7 @@ class Logger {
         #endif
     }
     
-    /// 记录钱包相关日志（敏感信息会被屏蔽）
+    /// Log wallet-related messages (sensitive information will be masked)
     static func wallet(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         let walletLog = OSLog(subsystem: subsystem, category: "Wallet")
         let fileName = URL(fileURLWithPath: file).lastPathComponent
@@ -87,12 +87,12 @@ class Logger {
         os_log("%{public}@", log: walletLog, type: .info, logMessage)
     }
     
-    /// 屏蔽敏感信息
+    /// Mask sensitive information
     static func redact(_ value: String) -> String {
         return "***"
     }
     
-    /// 屏蔽敏感字段
+    /// Mask sensitive fields
     static func redactSensitiveFields(_ dictionary: [String: Any]) -> [String: Any] {
         var redactedDict = dictionary
         
@@ -108,7 +108,7 @@ class Logger {
         return redactedDict
     }
     
-    /// 内部日志记录方法
+    /// Internal logging method
     private static func log(level: LogLevel, message: String, file: String, function: String, line: Int) {
         #if DEBUG
         let fileName = URL(fileURLWithPath: file).lastPathComponent
@@ -118,7 +118,7 @@ class Logger {
     }
 }
 
-/// 日志标签
+/// Log tags
 struct LogTag {
     static let network = "NETWORK"
     static let wallet = "WALLET"

@@ -10,27 +10,27 @@ import Foundation
 
 extension String {
     
-    /// 检查是否为有效的以太坊地址
+    /// Check if it's a valid Ethereum address
     var isValidEthereumAddress: Bool {
         return hasPrefix("0x") && count == 42 && dropFirst(2).allSatisfy { $0.isHexDigit }
     }
     
-    /// 检查是否为有效的十六进制字符串
+    /// Check if it's a valid hexadecimal string
     var isValidHex: Bool {
         return allSatisfy { $0.isHexDigit }
     }
     
-    /// 移除 0x 前缀
+    /// Remove 0x prefix
     var removingHexPrefix: String {
         return hasPrefix("0x") ? String(dropFirst(2)) : self
     }
     
-    /// 添加 0x 前缀
+    /// Add 0x prefix
     var withHexPrefix: String {
         return hasPrefix("0x") ? self : "0x\(self)"
     }
     
-    /// 格式化为地址显示（中间省略）
+    /// Format as address display (middle omitted)
     var formattedAddress: String {
         guard count >= 10 else { return self }
         let prefix = String(prefix(6))
@@ -38,7 +38,7 @@ extension String {
         return "\(prefix)…\(suffix)"
     }
     
-    /// 格式化为大数字显示
+    /// Format as large number display
     var formattedLargeNumber: String {
         guard let number = Double(self) else { return self }
         
@@ -57,22 +57,22 @@ extension String {
         }
     }
     
-    /// 检查是否为空或只包含空白字符
+    /// Check if it's empty or contains only whitespace characters
     var isBlank: Bool {
         return trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
-    /// 移除首尾空白字符
+    /// Remove leading and trailing whitespace characters
     var trimmed: String {
         return trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    /// 转换为 Data
+    /// Convert to Data
     var data: Data? {
         return data(using: .utf8)
     }
     
-    /// 从十六进制字符串转换为 Data
+    /// Convert from hexadecimal string to Data
     var hexData: Data? {
         let hex = removingHexPrefix
         guard hex.count % 2 == 0 else { return nil }
@@ -91,12 +91,12 @@ extension String {
         return data
     }
     
-    /// 本地化字符串
+    /// Localized string
     var localized: String {
         return NSLocalizedString(self, comment: "")
     }
     
-    /// 带参数的本地化字符串
+    /// Localized string with arguments
     func localized(with arguments: CVarArg...) -> String {
         return String(format: NSLocalizedString(self, comment: ""), arguments: arguments)
     }

@@ -10,8 +10,8 @@ import Foundation
 import RxSwift
 import WalletCore
 
-/// 生成助记词用例
-/// 负责生成新的助记词和对应的钱包地址
+/// Generate mnemonic use case
+/// Responsible for generating new mnemonic phrases and corresponding wallet addresses
 protocol GenerateMnemonicUseCaseProtocol {
     func generateMnemonic() -> Observable<String>
     func generateWallet(from mnemonic: String, network: Network) -> Observable<Wallet>
@@ -86,7 +86,7 @@ class GenerateMnemonicUseCase: GenerateMnemonicUseCaseProtocol {
                     fingerprint: address.description
                 )
                 
-                // ✅ 保存助记词到Keychain
+                // ✅ Save mnemonic to Keychain
                 let keychainStorage = KeychainStorageService()
                 _ = keychainStorage.store(key: "mnemonic_\(address.description)", value: mnemonic)
                 
@@ -100,7 +100,7 @@ class GenerateMnemonicUseCase: GenerateMnemonicUseCaseProtocol {
     }
 }
 
-/// 钱包相关错误
+/// Wallet-related errors
 enum WalletError: Error, LocalizedError {
     case invalidMnemonic
     case invalidAddress

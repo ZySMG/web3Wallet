@@ -9,18 +9,18 @@
 import Foundation
 import WalletCore
 
-/// 助记词验证器协议
+/// Mnemonic validator protocol
 protocol MnemonicValidatorProtocol {
     func isValid(_ mnemonic: String) -> Bool
     func validateWordCount(_ mnemonic: String) -> Bool
     func validateWords(_ mnemonic: String) -> Bool
 }
 
-/// 助记词验证器
-/// 负责验证助记词的有效性
+/// Mnemonic validator
+/// Responsible for validating mnemonic phrases
 class MnemonicValidator: MnemonicValidatorProtocol {
     
-    /// 支持的助记词长度
+    /// Supported mnemonic lengths
     private let supportedWordCounts = [12, 15, 18, 21, 24]
     
     func isValid(_ mnemonic: String) -> Bool {
@@ -36,26 +36,26 @@ class MnemonicValidator: MnemonicValidatorProtocol {
     }
     
     func validateWords(_ mnemonic: String) -> Bool {
-        // 使用 TrustWalletCore 验证助记词
+        // Use TrustWalletCore to validate mnemonic
         return Mnemonic.isValid(mnemonic: mnemonic)
     }
     
-    /// 获取助记词错误信息
+    /// Get mnemonic validation error message
     func getValidationError(_ mnemonic: String) -> String? {
         let words = mnemonic.trimmingCharacters(in: .whitespacesAndNewlines)
             .components(separatedBy: .whitespaces)
             .filter { !$0.isEmpty }
         
         if words.count == 0 {
-            return "助记词不能为空"
+            return "Mnemonic cannot be empty"
         }
         
         if !supportedWordCounts.contains(words.count) {
-            return "助记词必须是 \(supportedWordCounts.map(String.init).joined(separator: "、")) 个单词"
+            return "Mnemonic must be \(supportedWordCounts.map(String.init).joined(separator: ", ")) words"
         }
         
         if !validateWords(mnemonic) {
-            return "助记词包含无效单词"
+            return "Mnemonic contains invalid words"
         }
         
         return nil

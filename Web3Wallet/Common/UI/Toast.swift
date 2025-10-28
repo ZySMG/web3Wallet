@@ -8,7 +8,7 @@
 
 import UIKit
 
-/// Toast 类型
+/// Toast type
 enum ToastType {
     case success
     case error
@@ -34,7 +34,7 @@ enum ToastType {
     }
 }
 
-/// Toast 管理器
+/// Toast manager
 class ToastManager {
     
     static let shared = ToastManager()
@@ -44,7 +44,7 @@ class ToastManager {
     
     private init() {}
     
-    /// 显示 Toast
+    /// Show Toast
     func show(_ message: String, type: ToastType = .info, duration: TimeInterval = 3.0) {
         queue.async {
             DispatchQueue.main.async {
@@ -54,27 +54,27 @@ class ToastManager {
         }
     }
     
-    /// 显示成功 Toast
+    /// Show success Toast
     func showSuccess(_ message: String, duration: TimeInterval = 3.0) {
         show(message, type: .success, duration: duration)
     }
     
-    /// 显示错误 Toast
+    /// Show error Toast
     func showError(_ message: String, duration: TimeInterval = 5.0) {
         show(message, type: .error, duration: duration)
     }
     
-    /// 显示警告 Toast
+    /// Show warning Toast
     func showWarning(_ message: String, duration: TimeInterval = 4.0) {
         show(message, type: .warning, duration: duration)
     }
     
-    /// 显示信息 Toast
+    /// Show info Toast
     func showInfo(_ message: String, duration: TimeInterval = 3.0) {
         show(message, type: .info, duration: duration)
     }
     
-    /// 隐藏当前 Toast
+    /// Hide current Toast
     func hide() {
         queue.async {
             DispatchQueue.main.async {
@@ -89,7 +89,7 @@ class ToastManager {
         let toast = ToastView(message: message, type: type)
         window.addSubview(toast)
         
-        // 设置约束
+        // Setup constraints
         toast.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             toast.leadingAnchor.constraint(greaterThanOrEqualTo: window.leadingAnchor, constant: 20),
@@ -100,7 +100,7 @@ class ToastManager {
         
         currentToast = toast
         
-        // 显示动画
+        // Show animation
         toast.alpha = 0
         toast.transform = CGAffineTransform(translationX: 0, y: -50)
         
@@ -109,7 +109,7 @@ class ToastManager {
             toast.transform = .identity
         }
         
-        // 自动隐藏
+        // Auto hide
         DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
             self.hideToast(toast)
         }
@@ -134,7 +134,7 @@ class ToastManager {
     }
 }
 
-/// Toast 视图
+/// Toast view
 class ToastView: UIView {
     
     private let iconImageView = UIImageView()
@@ -160,21 +160,21 @@ class ToastView: UIView {
         layer.shadowRadius = 8
         layer.shadowOpacity = 0.1
         
-        // 配置图标
+        // Configure icon
         iconImageView.translatesAutoresizingMaskIntoConstraints = false
         iconImageView.image = UIImage(systemName: type.icon)
         iconImageView.tintColor = type.color
         iconImageView.contentMode = .scaleAspectFit
         addSubview(iconImageView)
         
-        // 配置消息标签
+        // Configure message label
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.font = UIFont.systemFont(ofSize: 16)
         messageLabel.textColor = UIColor.label
         messageLabel.numberOfLines = 0
         addSubview(messageLabel)
         
-        // 设置约束
+        // Setup constraints
         NSLayoutConstraint.activate([
             iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -195,36 +195,36 @@ class ToastView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        // 添加边框
+        // Add border
         layer.borderWidth = 1
         layer.borderColor = type.color.withAlphaComponent(0.2).cgColor
     }
 }
 
-/// Toast 扩展
+/// Toast extension
 extension UIViewController {
     
-    /// 显示 Toast
+    /// Show Toast
     func showToast(_ message: String, type: ToastType = .info, duration: TimeInterval = 3.0) {
         ToastManager.shared.show(message, type: type, duration: duration)
     }
     
-    /// 显示成功 Toast
+    /// Show success Toast
     func showSuccessToast(_ message: String, duration: TimeInterval = 3.0) {
         ToastManager.shared.showSuccess(message, duration: duration)
     }
     
-    /// 显示错误 Toast
+    /// Show error Toast
     func showErrorToast(_ message: String, duration: TimeInterval = 5.0) {
         ToastManager.shared.showError(message, duration: duration)
     }
     
-    /// 显示警告 Toast
+    /// Show warning Toast
     func showWarningToast(_ message: String, duration: TimeInterval = 4.0) {
         ToastManager.shared.showWarning(message, duration: duration)
     }
     
-    /// 显示信息 Toast
+    /// Show info Toast
     func showInfoToast(_ message: String, duration: TimeInterval = 3.0) {
         ToastManager.shared.showInfo(message, duration: duration)
     }
