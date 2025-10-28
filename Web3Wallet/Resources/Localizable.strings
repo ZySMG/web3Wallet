@@ -1,0 +1,111 @@
+/* 
+  Localizable.strings (English)
+  Web3Wallet
+*/
+
+// MARK: - Common
+"common.ok" = "OK";
+"common.cancel" = "Cancel";
+"common.confirm" = "Confirm";
+"common.retry" = "Retry";
+"common.copy" = "Copy";
+"common.share" = "Share";
+"common.close" = "Close";
+"common.save" = "Save";
+"common.delete" = "Delete";
+"common.edit" = "Edit";
+"common.done" = "Done";
+"common.loading" = "Loading...";
+"common.error" = "Error";
+"common.success" = "Success";
+"common.warning" = "Warning";
+"common.info" = "Info";
+
+// MARK: - Wallet
+"wallet.title" = "Wallet";
+"wallet.create" = "Create Wallet";
+"wallet.import" = "Import Wallet";
+"wallet.balance" = "Balance";
+"wallet.address" = "Address";
+"wallet.send" = "Send";
+"wallet.receive" = "Receive";
+"wallet.history" = "History";
+"wallet.settings" = "Settings";
+
+// MARK: - Onboarding
+"onboarding.welcome" = "Welcome to Web3Wallet";
+"onboarding.subtitle" = "Your gateway to the decentralized world";
+"onboarding.create_wallet" = "Create New Wallet";
+"onboarding.import_wallet" = "Import Existing Wallet";
+"onboarding.mnemonic.title" = "Backup Your Wallet";
+"onboarding.mnemonic.subtitle" = "Write down these words in the exact order shown";
+"onboarding.mnemonic.warning" = "Never share your mnemonic phrase with anyone";
+"onboarding.mnemonic.copy" = "Copy Mnemonic";
+"onboarding.mnemonic.confirm" = "I have backed up my mnemonic";
+
+// MARK: - Import
+"import.title" = "Import Wallet";
+"import.mnemonic.placeholder" = "Enter your mnemonic phrase";
+"import.mnemonic.invalid" = "Invalid mnemonic phrase";
+"import.mnemonic.word_count" = "Mnemonic must be 12, 15, 18, 21, or 24 words";
+"import.password.placeholder" = "Enter password (optional)";
+"import.confirm_password.placeholder" = "Confirm password";
+
+// MARK: - Send
+"send.title" = "Send";
+"send.to_address" = "To Address";
+"send.amount" = "Amount";
+"send.gas_price" = "Gas Price";
+"send.gas_limit" = "Gas Limit";
+"send.fee" = "Fee";
+"send.max" = "Max";
+"send.send_button" = "Send";
+"send.insufficient_balance" = "Insufficient balance";
+"send.invalid_address" = "Invalid address";
+"send.invalid_amount" = "Invalid amount";
+
+// MARK: - Receive
+"receive.title" = "Receive";
+"receive.address" = "Your Address";
+"receive.qr_code" = "QR Code";
+"receive.copy_address" = "Copy Address";
+"receive.share_address" = "Share Address";
+
+// MARK: - Transaction
+"transaction.title" = "Transaction";
+"transaction.hash" = "Hash";
+"transaction.from" = "From";
+"transaction.to" = "To";
+"transaction.amount" = "Amount";
+"transaction.fee" = "Fee";
+"transaction.status" = "Status";
+"transaction.block" = "Block";
+"transaction.time" = "Time";
+"transaction.explorer" = "View on Explorer";
+"transaction.pending" = "Pending";
+"transaction.success" = "Success";
+"transaction.failed" = "Failed";
+"transaction.received" = "Received";
+"transaction.sent" = "Sent";
+
+// MARK: - Network
+"network.mainnet" = "Ethereum Mainnet";
+"network.sepolia" = "Sepolia Testnet";
+"network.switch" = "Switch Network";
+
+// MARK: - Error Messages
+"error.network" = "Network error";
+"error.invalid_mnemonic" = "Invalid mnemonic phrase";
+"error.invalid_address" = "Invalid address";
+"error.insufficient_balance" = "Insufficient balance";
+"error.transaction_failed" = "Transaction failed";
+"error.keychain_error" = "Keychain operation failed";
+"error.no_api_key" = "No API key configured";
+"error.rate_limited" = "Rate limited";
+
+// MARK: - Demo Mode
+"demo.title" = "Demo Mode";
+"demo.subtitle" = "Running with mock data";
+"demo.api_key_required" = "API key required for live data";
+"demo.test_address" = "Test Address";
+"demo.test_mnemonic" = "Test Mnemonic";
