@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 入门协调器
+/// Onboarding coordinator
 class OnboardingCoordinator: BaseCoordinator {
     
     private let disposeBag = DisposeBag()
@@ -24,7 +24,7 @@ class OnboardingCoordinator: BaseCoordinator {
         let welcomeVM = WelcomeViewModel()
         welcomeVC.viewModel = welcomeVM
         
-        // 绑定事件
+        // Bind events
         welcomeVM.output.showCreateWallet
             .drive(onNext: { [weak self] in
                 self?.showCreateWallet()
@@ -45,7 +45,7 @@ class OnboardingCoordinator: BaseCoordinator {
         let createVM = CreateWalletViewModel()
         createVC.viewModel = createVM
         
-        // 绑定事件
+        // Bind events
         createVM.output.showMnemonic
             .drive(onNext: { [weak self] mnemonic in
                 self?.showMnemonic(mnemonic: mnemonic)
@@ -64,7 +64,7 @@ class OnboardingCoordinator: BaseCoordinator {
     private func showImportWallet() {
         let importVC = ImportWalletViewController()
         
-        // 设置回调
+        // Set callback
         importVC.onWalletImported = { [weak self] wallet in
             self?.onWalletImported(wallet: wallet)
         }
@@ -77,7 +77,7 @@ class OnboardingCoordinator: BaseCoordinator {
         let mnemonicVM = MnemonicViewModel(mnemonic: mnemonic)
         mnemonicVC.viewModel = mnemonicVM
         
-        // 绑定事件
+        // Bind events
         mnemonicVM.output.walletCreated
             .drive(onNext: { [weak self] wallet in
                 self?.onWalletCreated(wallet: wallet)
@@ -88,12 +88,12 @@ class OnboardingCoordinator: BaseCoordinator {
     }
     
     private func onWalletCreated(wallet: Wallet) {
-        // 通知父协调器钱包已创建
+        // Notify parent coordinator wallet created
         NotificationCenter.default.post(name: .walletCreated, object: wallet)
     }
     
     private func onWalletImported(wallet: Wallet) {
-        // 通知父协调器钱包已导入
+        // Notify parent coordinator wallet imported
         NotificationCenter.default.post(name: .walletImported, object: wallet)
     }
 }

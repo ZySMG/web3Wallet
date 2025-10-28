@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 交易列表视图
+/// Transaction list view
 class TransactionListView: UIView {
     
     private let titleLabel = UILabel()
@@ -60,10 +60,10 @@ class TransactionListView: UIView {
 extension Reactive where Base: TransactionListView {
     var transactions: Binder<[Transaction]> {
         return Binder(base) { view, transactions in
-            // 清除之前的绑定
+            // Clear previous bindings
             view.disposeBag = DisposeBag()
             
-            // 设置数据源
+            // Setup data source
             Observable.just(transactions)
                 .bind(to: view.tableView.rx.items(cellIdentifier: "TransactionCell", cellType: TransactionCell.self)) { _, transaction, cell in
                     cell.configure(with: transaction)

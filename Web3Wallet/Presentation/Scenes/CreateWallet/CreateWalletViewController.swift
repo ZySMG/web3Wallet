@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 创建钱包视图控制器
+/// Create wallet view controller
 class CreateWalletViewController: UIViewController {
     
     var viewModel: CreateWalletViewModel!
@@ -31,34 +31,34 @@ class CreateWalletViewController: UIViewController {
         title = "wallet.create".localized
         view.backgroundColor = UIColor.systemBackground
         
-        // 配置标题
+        // Configure title
         titleLabel.text = "onboarding.mnemonic.title".localized
         titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
         titleLabel.textAlignment = .center
         titleLabel.textColor = UIColor.label
         titleLabel.numberOfLines = 0
         
-        // 配置副标题
+        // Configure subtitle
         subtitleLabel.text = "onboarding.mnemonic.subtitle".localized
         subtitleLabel.font = UIFont.systemFont(ofSize: 16)
         subtitleLabel.textAlignment = .center
         subtitleLabel.textColor = UIColor.secondaryLabel
         subtitleLabel.numberOfLines = 0
         
-        // 配置创建按钮
+        // Configure create button
         createButton.setTitle("wallet.create".localized, for: .normal)
         createButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         createButton.backgroundColor = UIColor.systemBlue
         createButton.setTitleColor(.white, for: .normal)
         createButton.layer.cornerRadius = 12
         
-        // 添加子视图
+        // Add subviews
         [titleLabel, subtitleLabel, createButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
         
-        // 设置约束
+        // Setup constraints
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             titleLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100),
@@ -77,21 +77,21 @@ class CreateWalletViewController: UIViewController {
     }
     
     private func bindViewModel() {
-        // 绑定按钮事件
+        // Bind button events
         createButton.rx.tap
             .bind(to: viewModel.input.createTrigger)
             .disposed(by: disposeBag)
         
-        // 绑定输出
+        // Bind outputs
         viewModel.output.showMnemonic
             .drive(onNext: { [weak self] mnemonic in
-                // 这里会由协调器处理导航
+                // Navigation will be handled by coordinator
             })
             .disposed(by: disposeBag)
         
         viewModel.output.walletCreated
             .drive(onNext: { [weak self] wallet in
-                // 这里会由协调器处理导航
+                // Navigation will be handled by coordinator
             })
             .disposed(by: disposeBag)
         
@@ -103,7 +103,7 @@ class CreateWalletViewController: UIViewController {
     }
 }
 
-/// 创建钱包视图模型
+/// Create wallet view model
 class CreateWalletViewModel {
     
     struct Input {
@@ -135,7 +135,7 @@ class CreateWalletViewModel {
             error: errorSubject.asDriver(onErrorJustReturn: WalletError.walletNotFound)
         )
         
-        // 绑定创建触发
+        // Bind create trigger
         input.createTrigger
             .flatMapLatest { [weak self] _ in
                 self?.generateMnemonicUseCase.generateMnemonic() ?? Observable.empty()

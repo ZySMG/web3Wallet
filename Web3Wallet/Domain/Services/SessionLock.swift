@@ -11,31 +11,31 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 会话锁定服务协议
+/// Session lock service protocol
 protocol SessionLockProtocol {
-    /// 开始会话锁定监控
+    /// Start session lock monitoring
     func startMonitoring()
     
-    /// 停止会话锁定监控
+    /// Stop session lock monitoring
     func stopMonitoring()
     
-    /// 手动锁定
+    /// Manual lock
     func lockSession()
     
-    /// 解锁会话
+    /// Unlock session
     func unlockSession()
     
-    /// 重置锁定计时器
+    /// Reset lock timer
     func resetLockTimer()
     
-    /// 会话状态观察者
+    /// Session status observer
     var isLocked: BehaviorRelay<Bool> { get }
     
-    /// 锁定时间设置
+    /// Lock time setting
     var lockTimeout: TimeInterval { get set }
 }
 
-/// 会话锁定服务实现
+/// Session lock service implementation
 class SessionLockService: SessionLockProtocol {
     
     private let session: WalletSession
@@ -102,7 +102,7 @@ class SessionLockService: SessionLockProtocol {
     // MARK: - Private Methods
     
     private func setupBindings() {
-        // 监听锁定超时设置变化
+        // Listen to lock timeout setting changes
         lockTimeoutSubject
             .subscribe(onNext: { [weak self] _ in
                 self?.resetLockTimer()
@@ -111,7 +111,7 @@ class SessionLockService: SessionLockProtocol {
     }
     
     private func setupAppStateObservers() {
-        // 监听应用状态变化
+        // Listen to app state changes
         NotificationCenter.default.rx
             .notification(UIApplication.didEnterBackgroundNotification)
             .subscribe(onNext: { [weak self] _ in
@@ -165,7 +165,7 @@ class SessionLockService: SessionLockProtocol {
     private func handleAppDidEnterBackground() {
         Logger.info("App entered background")
         
-        // 开始后台任务
+        // Start background task
         backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "SessionLock") { [weak self] in
             self?.lockSession()
             if self?.backgroundTask != .invalid {
@@ -174,7 +174,7 @@ class SessionLockService: SessionLockProtocol {
             }
         }
         
-        // 如果应用进入后台，立即锁定（可选，也可以设置较短的超时时间）
+        // If app goes to background, lock immediately (optional, can also set shorter timeout)
         DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
             self?.lockSession()
         }
@@ -183,7 +183,7 @@ class SessionLockService: SessionLockProtocol {
     private func handleAppWillEnterForeground() {
         Logger.info("App will enter foreground")
         
-        // 结束后台任务
+        // End background task
         if backgroundTask != .invalid {
             UIApplication.shared.endBackgroundTask(backgroundTask)
             backgroundTask = .invalid
@@ -193,7 +193,7 @@ class SessionLockService: SessionLockProtocol {
     private func handleAppDidBecomeActive() {
         Logger.info("App became active")
         
-        // 应用变为活跃时，如果已锁定，需要用户重新解锁
+        // When app becomes active, if locked, user needs to unlock again
         if isLockedSubject.value {
             Logger.info("App is active but session is locked")
         }
@@ -202,13 +202,13 @@ class SessionLockService: SessionLockProtocol {
     private func handleAppWillResignActive() {
         Logger.info("App will resign active")
         
-        // 应用即将失去活跃状态时，可以选择立即锁定或重置计时器
-        // 这里选择重置计时器，给用户一些缓冲时间
+        // When app is about to lose active state, can choose to lock immediately or reset timer
+        // Here choose to reset timer, giving user some buffer time
         resetLockTimer()
     }
 }
 
-/// 会话管理器 - 统一管理钱包会话和锁定
+/// Session manager - unified management of wallet sessions and locking
 class SessionManager {
     
     private let sessionLock: SessionLockProtocol
@@ -229,7 +229,7 @@ class SessionManager {
         setupBindings()
     }
     
-    /// 解锁钱包
+    /// Unlock wallet
     func unlockWallet(walletId: String, password: String) -> Observable<Bool> {
         return walletManager.unlockWallet(walletId: walletId, password: password)
             .do(onNext: { [weak self] success in
@@ -240,24 +240,24 @@ class SessionManager {
             })
     }
     
-    /// 锁定钱包
+    /// Lock wallet
     func lockWallet() {
         walletManager.lockWallet()
         sessionLock.lockSession()
         isUnlocked.accept(false)
     }
     
-    /// 添加新账户
+    /// Add new account
     func addAccount() -> Observable<Account> {
         return walletManager.addAccount()
     }
     
-    /// 获取当前钱包账户
+    /// Get current wallet accounts
     func getCurrentWalletAccounts() -> Observable<[Account]> {
         return walletManager.getCurrentWalletAccounts()
     }
     
-    /// 切换钱包
+    /// Switch wallet
     func switchWallet(walletId: String, password: String) -> Observable<Bool> {
         return walletManager.switchWallet(walletId: walletId, password: password)
             .do(onNext: { [weak self] success in
@@ -269,7 +269,7 @@ class SessionManager {
     }
     
     private func setupBindings() {
-        // 监听会话锁定状态
+        // Listen to session lock status
         sessionLock.isLocked
             .map { !$0 }
             .bind(to: isUnlocked)

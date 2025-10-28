@@ -9,22 +9,22 @@
 import Foundation
 import CryptoKit
 
-/// EIP-55 校验和工具类
-/// 实现以太坊地址的校验和验证
+/// EIP-55 checksum utility class
+/// Implements Ethereum address checksum validation
 class EIP55 {
     
-    /// 验证地址是否符合 EIP-55 标准
+    /// Verify if address conforms to EIP-55 standard
     static func isValid(_ address: String) -> Bool {
         guard address.hasPrefix("0x") && address.count == 42 else { return false }
         
         let hexPart = String(address.dropFirst(2))
         guard hexPart.allSatisfy({ $0.isHexDigit }) else { return false }
         
-        // 计算校验和
+        // Calculate checksum
         let hash = SHA256.hash(data: hexPart.lowercased().data(using: .utf8) ?? Data())
         let hashHex = hash.compactMap { String(format: "%02x", $0) }.joined()
         
-        // 验证每个字符的大小写
+        // Verify case of each character
         for (i, char) in hexPart.enumerated() {
             let hashChar = hashHex[hashHex.index(hashHex.startIndex, offsetBy: i)]
             let isUpperCase = char.isUppercase
@@ -39,14 +39,14 @@ class EIP55 {
         return true
     }
     
-    /// 将地址转换为 EIP-55 格式
+    /// Convert address to EIP-55 format
     static func toChecksumAddress(_ address: String) -> String {
         guard address.hasPrefix("0x") && address.count == 42 else { return address }
         
         let hexPart = String(address.dropFirst(2))
         guard hexPart.allSatisfy({ $0.isHexDigit }) else { return address }
         
-        // 计算校验和
+        // Calculate checksum
         let hash = SHA256.hash(data: hexPart.lowercased().data(using: .utf8) ?? Data())
         let hashHex = hash.compactMap { String(format: "%02x", $0) }.joined()
         
@@ -65,20 +65,20 @@ class EIP55 {
         return result
     }
     
-    /// 验证地址格式是否正确（不验证校验和）
+    /// Verify if address format is correct (without checksum validation)
     static func isValidFormat(_ address: String) -> Bool {
         return address.hasPrefix("0x") && 
                address.count == 42 && 
                String(address.dropFirst(2)).allSatisfy { $0.isHexDigit }
     }
     
-    /// 标准化地址（转换为小写）
+    /// Normalize address (convert to lowercase)
     static func normalize(_ address: String) -> String? {
         guard isValidFormat(address) else { return nil }
         return address.lowercased()
     }
     
-    /// 获取地址验证错误信息
+    /// Get address validation error message
     static func getValidationError(_ address: String) -> String? {
         let trimmedAddress = address.trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -107,10 +107,10 @@ class EIP55 {
     }
 }
 
-/// 地址格式化工具
+/// Address formatting utility
 class AddressFormatter {
     
-    /// 格式化为显示地址（中间省略）
+    /// Format as display address (middle omitted)
     static func displayAddress(_ address: String, prefixLength: Int = 6, suffixLength: Int = 4) -> String {
         guard address.count >= prefixLength + suffixLength else { return address }
         
@@ -120,7 +120,7 @@ class AddressFormatter {
         return "\(prefix)…\(suffix)"
     }
     
-    /// 格式化为完整地址（每4位添加空格）
+    /// Format as full address (add space every 4 characters)
     static func fullAddress(_ address: String) -> String {
         guard address.hasPrefix("0x") else { return address }
         
@@ -137,46 +137,46 @@ class AddressFormatter {
         return formatted
     }
     
-    /// 格式化为二维码地址（移除空格）
+    /// Format as QR code address (remove spaces)
     static func qrCodeAddress(_ address: String) -> String {
         return address.replacingOccurrences(of: " ", with: "")
     }
 }
 
-/// 地址验证器扩展
+/// Address validator extension
 extension String {
     
-    /// 检查是否为有效的以太坊地址格式
+    /// Check if it's a valid Ethereum address format
     var isValidEthereumAddressFormat: Bool {
         return EIP55.isValidFormat(self)
     }
     
-    /// 检查是否为有效的 EIP-55 地址
+    /// Check if it's a valid EIP-55 address
     var isValidEIP55Address: Bool {
         return EIP55.isValid(self)
     }
     
-    /// 转换为 EIP-55 格式
+    /// Convert to EIP-55 format
     var toChecksumAddress: String {
         return EIP55.toChecksumAddress(self)
     }
     
-    /// 标准化地址
+    /// Normalize address
     var normalizedAddress: String? {
         return EIP55.normalize(self)
     }
     
-    /// 格式化为显示地址
+    /// Format as display address
     var displayAddress: String {
         return AddressFormatter.displayAddress(self)
     }
     
-    /// 格式化为完整地址
+    /// Format as full address
     var fullAddress: String {
         return AddressFormatter.fullAddress(self)
     }
     
-    /// 格式化为二维码地址
+    /// Format as QR code address
     var qrCodeAddress: String {
         return AddressFormatter.qrCodeAddress(self)
     }

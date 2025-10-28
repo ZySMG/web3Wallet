@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// 发送状态枚举
+/// Send status enum
 enum SendStatus {
     case sending          // 发送中
     case success(txHash: String)  // 发送成功，包含交易哈希

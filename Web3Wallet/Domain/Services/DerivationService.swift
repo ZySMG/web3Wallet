@@ -71,11 +71,11 @@ protocol DerivationServiceProtocol {
     func deriveAccounts(from seed: Data, walletId: String, derivationRule: DerivationRule, maxIndex: Int) -> [Account]
 }
 
-/// 派生服务实现
+/// Derivation service implementation
 class DerivationService: DerivationServiceProtocol {
     
     func derivePrivateKey(from seed: Data, path: String) -> Data? {
-        // 使用 TrustWalletCore 进行 BIP32 派生
+        // Use TrustWalletCore for BIP32 derivation
         guard let hdWallet = HDWallet(entropy: seed, passphrase: "") else {
             Logger.error("Failed to create HD wallet from seed")
             return nil
@@ -120,7 +120,7 @@ class DerivationService: DerivationServiceProtocol {
             return nil
         }
         
-        // 使用 TrustWalletCore 派生以太坊地址
+        // Use TrustWalletCore to derive Ethereum address
         guard let privateKeyObj = PrivateKey(data: privateKey) else {
             Logger.error("Failed to create private key object")
             return nil
@@ -163,7 +163,7 @@ class DerivationService: DerivationServiceProtocol {
     }
 }
 
-/// 账户发现服务
+/// Account discovery service
 class AccountDiscoveryService {
     private let ethereumService: EthereumServiceProtocol
     private let gapLimit: Int
@@ -173,7 +173,7 @@ class AccountDiscoveryService {
         self.gapLimit = gapLimit
     }
     
-    /// 发现新账户（检查后续索引是否有余额或交易）
+    /// Discover new accounts (check subsequent indices for balance or transactions)
     func discoverAccounts(from seed: Data, walletId: String, derivationRule: DerivationRule, currentMaxIndex: Int) -> Observable<Int> {
         return Observable.create { observer in
             let derivationService = DerivationService()
@@ -188,7 +188,7 @@ class AccountDiscoveryService {
                     continue
                 }
                 
-                // 检查地址是否有余额或交易
+                // Check if address has balance or transactions
                 self.checkAccountActivity(address: address, network: .ethereumMainnet)
                     .subscribe(onNext: { hasActivity in
                         if hasActivity {
@@ -198,7 +198,7 @@ class AccountDiscoveryService {
                             consecutiveEmptyAccounts += 1
                         }
                         
-                        // 如果连续多个空账户，停止发现
+                        // If multiple consecutive empty accounts, stop discovery
                         if consecutiveEmptyAccounts >= 5 {
                             observer.onNext(newMaxIndex)
                             observer.onCompleted()
@@ -217,10 +217,10 @@ class AccountDiscoveryService {
     }
     
     private func checkAccountActivity(address: String, network: Network) -> Observable<Bool> {
-        // 检查 ETH 余额
+        // Check ETH balance
         let ethBalance = ethereumService.getBalance(address: address, currency: .eth, network: network)
         
-        // 检查是否有交易历史（这里简化处理，实际应该调用交易历史 API）
+        // Check if there is transaction history (simplified here, should call transaction history API in practice)
         let hasTransactions = Observable.just(false) // TODO: 实现交易历史检查
         
         return Observable.combineLatest(ethBalance, hasTransactions) { balance, hasTx in

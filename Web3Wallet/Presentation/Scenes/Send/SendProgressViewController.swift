@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 发送进度页面视图控制器
+/// Send progress page view controller
 class SendProgressViewController: UIViewController {
     
     // MARK: - Properties

@@ -8,8 +8,8 @@
 
 import Foundation
 
-/// 网络配置实体
-/// 定义支持的区块链网络及其配置信息
+/// Network configuration entity
+/// Define supported blockchain networks and their configuration information
 struct Network: Equatable, Codable {
     let id: String
     let name: String

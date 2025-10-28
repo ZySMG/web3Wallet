@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 交易详情视图控制器
+/// Transaction detail view controller
 class TransactionDetailViewController: UIViewController {
     
     var viewModel: TransactionDetailViewModel!

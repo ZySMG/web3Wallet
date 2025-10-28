@@ -9,7 +9,7 @@
 import Foundation
 import Alamofire
 
-/// API 端点定义
+/// API endpoint definitions
 struct APIEndpoint {
     let path: String
     let method: HTTPMethod
@@ -18,7 +18,7 @@ struct APIEndpoint {
     let headers: HTTPHeaders?
 }
 
-/// Etherscan API 端点
+/// Etherscan API endpoints
 enum EtherscanEndpoint {
     case transactionList(address: String, startBlock: Int?, endBlock: Int?, page: Int, offset: Int, sort: String)
     
@@ -57,7 +57,7 @@ enum EtherscanEndpoint {
     }
 }
 
-/// CoinGecko API 端点
+/// CoinGecko API endpoints
 enum CoinGeckoEndpoint {
     case price(ids: [String], vsCurrencies: [String])
     case priceHistory(id: String, days: Int)

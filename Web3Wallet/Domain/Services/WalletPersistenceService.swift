@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-/// 模拟钱包存储服务
+/// Mock wallet storage service
 class MockWalletStore: WalletStoreProtocol {
     private var wallets: [Wallet] = []
     private var activeWalletId: String?
@@ -81,31 +81,31 @@ class MockWalletStore: WalletStoreProtocol {
     }
 }
 
-/// 钱包持久化服务协议
+/// Wallet persistence service protocol
 protocol WalletPersistenceServiceProtocol {
-    /// 保存钱包
+    /// Save wallet
     func saveWallet(_ wallet: Wallet) -> Observable<Bool>
     
-    /// 获取所有钱包
+    /// Get all wallets
     func getAllWallets() -> Observable<[Wallet]>
     
-    /// 删除钱包
+    /// Delete wallet
     func deleteWallet(walletId: String) -> Observable<Bool>
     
-    /// 更新钱包
+    /// Update wallet
     func updateWallet(_ wallet: Wallet) -> Observable<Bool>
     
-    /// 保存账户
+    /// Save account
     func saveAccount(_ account: Account) -> Observable<Bool>
     
-    /// 获取钱包的所有账户
+    /// Get all accounts of wallet
     func getAccounts(for walletId: String) -> Observable<[Account]>
     
-    /// 删除账户
+    /// Delete account
     func deleteAccount(accountId: String) -> Observable<Bool>
 }
 
-/// 钱包持久化服务实现
+/// Wallet persistence service implementation
 class WalletPersistenceService: WalletPersistenceServiceProtocol {
     
     private let walletStore: WalletStoreProtocol
@@ -114,8 +114,8 @@ class WalletPersistenceService: WalletPersistenceServiceProtocol {
     
     init(walletStore: WalletStoreProtocol? = nil,
          vaultService: VaultServiceProtocol = VaultService(keychainService: KeychainStorageService(service: "Web3Wallet"))) {
-        // 暂时使用模拟实现
-        // TODO: 实现真实的 WalletStore 初始化
+        // Temporarily use mock implementation
+        // TODO: Implement real WalletStore initialization
         self.walletStore = MockWalletStore()
         self.vaultService = vaultService
     }
@@ -130,7 +130,7 @@ class WalletPersistenceService: WalletPersistenceServiceProtocol {
                 return Disposables.create()
             }
             
-            // 保存到 WalletStore
+            // Save to WalletStore
             let success = self.walletStore.addWallet(wallet)
             observer.onNext(success)
             observer.onCompleted()
@@ -161,10 +161,10 @@ class WalletPersistenceService: WalletPersistenceServiceProtocol {
                 return Disposables.create()
             }
             
-            // 从 WalletStore 删除
+            // Delete from WalletStore
             let success = self.walletStore.deleteWallet(walletId: walletId)
             
-            // 从 VaultService 删除加密数据
+            // Delete encrypted data from VaultService
             _ = self.vaultService.deleteEncryptedWallet(walletId: walletId)
             
             observer.onNext(success)
@@ -192,11 +192,11 @@ class WalletPersistenceService: WalletPersistenceServiceProtocol {
     
     func saveAccount(_ account: Account) -> Observable<Bool> {
         return Observable.create { observer in
-            // 这里可以实现账户的持久化逻辑
-            // 可以使用 UserDefaults、Core Data 或 SQLite
-            // 目前使用简单的内存存储
+            // Account persistence logic can be implemented here
+            // Can use UserDefaults, Core Data or SQLite
+            // Currently using simple in-memory storage
             
-            // TODO: 实现真实的持久化存储
+            // TODO: Implement real persistent storage
             observer.onNext(true)
             observer.onCompleted()
             return Disposables.create()
@@ -205,7 +205,7 @@ class WalletPersistenceService: WalletPersistenceServiceProtocol {
     
     func getAccounts(for walletId: String) -> Observable<[Account]> {
         return Observable.create { observer in
-            // TODO: 从持久化存储中获取账户
+            // TODO: Get accounts from persistent storage
             observer.onNext([])
             observer.onCompleted()
             return Disposables.create()
@@ -214,7 +214,7 @@ class WalletPersistenceService: WalletPersistenceServiceProtocol {
     
     func deleteAccount(accountId: String) -> Observable<Bool> {
         return Observable.create { observer in
-            // TODO: 从持久化存储中删除账户
+            // TODO: Delete account from persistent storage
             observer.onNext(true)
             observer.onCompleted()
             return Disposables.create()
@@ -222,7 +222,7 @@ class WalletPersistenceService: WalletPersistenceServiceProtocol {
     }
 }
 
-/// 钱包种子管理服务
+/// Wallet seed management service
 class WalletSeedService {
     
     private let vaultService: VaultServiceProtocol
@@ -234,7 +234,7 @@ class WalletSeedService {
         self.derivationService = derivationService
     }
     
-    /// 保存钱包种子
+    /// Save wallet seed
     func saveWalletSeed(walletId: String, mnemonic: String, password: String) -> Observable<Bool> {
         return Observable.create { [weak self] observer in
             guard let self = self else {
@@ -244,18 +244,18 @@ class WalletSeedService {
             }
             
             do {
-                // 暂时使用模拟实现
-                // TODO: 替换为真实的 WalletCore 实现
+                // Temporarily use mock implementation
+                // TODO: Replace with real WalletCore implementation
                 let mockSeed = Data(repeating: 0, count: 64) // 模拟种子数据
                 
-                // 加密种子
+                // Encrypt seed
                 guard let encryptedData = self.vaultService.encryptSeed(mockSeed, password: password) else {
                     observer.onNext(false)
                     observer.onCompleted()
                     return Disposables.create()
                 }
                 
-                // 保存加密的种子
+                // Save encrypted seed
                 let success = self.vaultService.storeEncryptedWallet(walletId: walletId, encryptedData: encryptedData)
                 observer.onNext(success)
                 observer.onCompleted()
@@ -267,7 +267,7 @@ class WalletSeedService {
         }
     }
     
-    /// 获取钱包种子
+    /// Get wallet seed
     func getWalletSeed(walletId: String, password: String) -> Observable<Data?> {
         return Observable.create { [weak self] observer in
             guard let self = self else {
@@ -276,14 +276,14 @@ class WalletSeedService {
                 return Disposables.create()
             }
             
-            // 获取加密的种子数据
+            // Get encrypted seed data
             guard let encryptedData = self.vaultService.getEncryptedWallet(walletId: walletId) else {
                 observer.onNext(nil)
                 observer.onCompleted()
                 return Disposables.create()
             }
             
-            // 解密种子
+            // Decrypt seed
             let seed = self.vaultService.decryptSeed(encryptedData, password: password)
             observer.onNext(seed)
             observer.onCompleted()
@@ -291,7 +291,7 @@ class WalletSeedService {
         }
     }
     
-    /// 派生新账户
+    /// Derive new account
     func deriveNewAccount(walletId: String, password: String, accountIndex: Int) -> Observable<Account?> {
         return Observable.create { [weak self] observer in
             guard let self = self else {
@@ -300,7 +300,7 @@ class WalletSeedService {
                 return Disposables.create()
             }
             
-            // 获取钱包种子
+            // Get wallet seed
             self.getWalletSeed(walletId: walletId, password: password)
                 .subscribe(onNext: { seed in
                     guard let seed = seed else {
@@ -309,7 +309,7 @@ class WalletSeedService {
                         return
                     }
                     
-                    // 使用 DerivationService 派生新账户
+                    // Use DerivationService to derive new account
                     let derivationPath = "m/44'/60'/0'/0/\(accountIndex)"
                     guard let privateKey = self.derivationService.derivePrivateKey(from: seed, path: derivationPath),
                           let address = self.derivationService.deriveAddress(from: privateKey, coinType: 60) else {

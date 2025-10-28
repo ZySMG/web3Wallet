@@ -11,12 +11,12 @@ protocol EstimateGasUseCaseProtocol {
     func estimateGas(from: String, to: String, amount: Decimal, currency: Currency, network: Network) -> Observable<Decimal>
 }
 
-/// 使用 eth_estimateGas 估算（原生 & ERC-20）
+/// Use eth_estimateGas to estimate (native & ERC-20)
 final class EstimateGasUseCase: EstimateGasUseCaseProtocol {
 
     func estimateGas(from: String, to: String, amount: Decimal, currency: Currency, network: Network) -> Observable<Decimal> {
         return Observable.create { observer in
-            // decimal -> 0x hex（简化为 UInt64，足以覆盖测试用额）
+            // decimal -> 0x hex (simplified to UInt64, sufficient for test amounts)
             func toUnitsHex(_ value: Decimal, decimals: Int) -> String {
                 let scale = pow(10 as Decimal, decimals)
                 let scaled = NSDecimalNumber(decimal: value).multiplying(by: NSDecimalNumber(decimal: scale)).decimalValue

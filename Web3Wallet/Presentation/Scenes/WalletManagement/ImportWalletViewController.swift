@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 导入钱包视图控制器
+/// Import wallet view controller
 class ImportWalletViewController: UIViewController {
     
     var onWalletImported: ((Wallet) -> Void)?
@@ -130,17 +130,17 @@ class ImportWalletViewController: UIViewController {
     }
     
     @objc private func cancelTapped() {
-        // 智能判断返回方式
+        // Smart navigation return
         if let navigationController = navigationController {
-            // 如果是通过push进来的，使用pop
+            // If pushed in, use pop
             if navigationController.viewControllers.count > 1 {
                 navigationController.popViewController(animated: true)
             } else {
-                // 如果是通过present进来的，使用dismiss
+                // If presented in, use dismiss
                 dismiss(animated: true)
             }
         } else {
-            // 没有navigationController，直接dismiss
+            // No navigationController, dismiss directly
             dismiss(animated: true)
         }
     }

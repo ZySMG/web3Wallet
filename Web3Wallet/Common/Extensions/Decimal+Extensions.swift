@@ -10,27 +10,27 @@ import Foundation
 
 extension Decimal {
     
-    /// 转换为 Double
+    /// Convert to Double
     var doubleValue: Double {
         return NSDecimalNumber(decimal: self).doubleValue
     }
     
-    /// 转换为 Float
+    /// Convert to Float
     var floatValue: Float {
         return NSDecimalNumber(decimal: self).floatValue
     }
     
-    /// 转换为 Int
+    /// Convert to Int
     var intValue: Int {
         return NSDecimalNumber(decimal: self).intValue
     }
     
-    /// 转换为 String
+    /// Convert to String
     var stringValue: String {
         return NSDecimalNumber(decimal: self).stringValue
     }
     
-    /// 格式化为货币显示
+    /// Format as currency display
     func formatted(decimals: Int = 2, showSymbol: Bool = false, symbol: String = "$") -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -47,7 +47,7 @@ extension Decimal {
         return formatted
     }
     
-    /// 格式化为百分比
+    /// Format as percentage
     func formattedAsPercentage(decimals: Int = 2) -> String {
         let percentage = self * 100
         let formatter = NumberFormatter()
@@ -58,27 +58,27 @@ extension Decimal {
         return "\(formatter.string(from: percentage as NSDecimalNumber) ?? "0")%"
     }
     
-    /// 检查是否为零
+    /// Check if zero
     var isZero: Bool {
         return self == 0
     }
     
-    /// 检查是否为正数
+    /// Check if positive
     var isPositive: Bool {
         return self > 0
     }
     
-    /// 检查是否为负数
+    /// Check if negative
     var isNegative: Bool {
         return self < 0
     }
     
-    /// 绝对值
+    /// Absolute value
     var absoluteValue: Decimal {
         return self < 0 ? -self : self
     }
     
-    /// 四舍五入到指定小数位
+    /// Round to specified decimal places
     func rounded(toPlaces places: Int) -> Decimal {
         var value = self
         var result = Decimal()
@@ -86,7 +86,7 @@ extension Decimal {
         return result
     }
     
-    /// 截断到指定小数位
+    /// Truncate to specified decimal places
     func truncated(toPlaces places: Int) -> Decimal {
         let divisor = pow(10, places)
         return Decimal(Int((self * divisor).doubleValue)) / divisor

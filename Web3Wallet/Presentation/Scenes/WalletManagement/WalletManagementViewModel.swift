@@ -86,14 +86,14 @@ class WalletManagementViewModel {
     }
     
     private func setupBindings() {
-        // 钱包选择
+        // Wallet selection
         input.walletSelected
             .subscribe(onNext: { [weak self] wallet in
                 self?.switchToWallet(wallet)
             })
             .disposed(by: disposeBag)
         
-        // 导入钱包触发
+        // Import wallet trigger
         input.importWalletTrigger
             .subscribe(onNext: { [weak self] in
                 self?.showImportWalletSubject.accept(())
@@ -110,7 +110,7 @@ class WalletManagementViewModel {
             })
             .disposed(by: disposeBag)
         
-        // ✅ 监听钱包添加到管理的通知
+        // ✅ Listen to wallet added to management notification
         NotificationCenter.default.rx
             .notification(.walletAddedToManagement)
             .subscribe(onNext: { [weak self] notification in
@@ -122,14 +122,14 @@ class WalletManagementViewModel {
     }
     
     private func setupWalletManagerBindings() {
-        // ✅ 监听WalletManagerSingleton的所有钱包变化
+        // ✅ Listen to WalletManagerSingleton all wallets changes
         WalletManagerSingleton.shared.allWalletsDriver
             .drive(onNext: { [weak self] wallets in
                 self?.updateWalletSections(wallets)
             })
             .disposed(by: disposeBag)
         
-        // ✅ 监听WalletManagerSingleton的当前钱包变化
+        // ✅ Listen to WalletManagerSingleton current wallet changes
         WalletManagerSingleton.shared.currentWalletDriver
             .drive(onNext: { [weak self] wallet in
                 self?.currentWalletSubject.accept(wallet)
@@ -138,13 +138,13 @@ class WalletManagementViewModel {
     }
     
     private func updateWalletSections(_ wallets: [Wallet]) {
-        // ✅ 使用传入的钱包列表，而不是从Keychain重新加载
+        // ✅ Use passed wallet list instead of reloading from Keychain
         let sections = createWalletSections(from: wallets)
         walletSectionsSubject.accept(sections)
     }
     
     private func loadCurrentWallet() {
-        // Load current wallet from Keychain - 使用JSON格式解析
+        // Load current wallet from Keychain - use JSON format parsing
         guard let currentWalletString = keychainStorage.retrieve(key: "current_wallet"),
               let walletData = currentWalletString.data(using: .utf8) else {
             return
@@ -155,7 +155,7 @@ class WalletManagementViewModel {
             currentWalletSubject.accept(wallet)
         } catch {
             print("Failed to decode current wallet: \(error)")
-            // 如果解析失败，尝试从存储的钱包列表中找到匹配的钱包
+            // If parsing fails, try to find matching wallet from stored wallet list
             let wallets = loadWalletsFromKeychain()
             if let firstWallet = wallets.first {
                 currentWalletSubject.accept(firstWallet)
@@ -164,14 +164,14 @@ class WalletManagementViewModel {
     }
     
     private func createWalletSections(from wallets: [Wallet]) -> [WalletSection] {
-        // ✅ 直接从WalletManagerSingleton获取当前钱包
+        // ✅ Get current wallet directly from WalletManagerSingleton
         let currentWallet = WalletManagerSingleton.shared.currentWalletSubject.value
         
         return wallets.enumerated().map { index, wallet in
-            // 获取该钱包的账户，如果没有则创建默认账户
+            // Get wallet accounts, create default account if none
             let accounts = accountsStorage[wallet.address] ?? [createDefaultAccount(for: wallet)]
             
-            // ✅ 更新账户的选中状态
+            // ✅ Update account selection state
             let updatedAccounts = accounts.map { account in
                 WalletAccount(
                     id: account.id,
@@ -221,7 +221,7 @@ class WalletManagementViewModel {
     }
     
     func addWallet(_ wallet: Wallet) {
-        // ✅ 使用WalletManagerSingleton添加钱包
+        // ✅ Use WalletManagerSingleton to add wallet
         WalletManagerSingleton.shared.addWallet(wallet)
     }
     
@@ -240,7 +240,7 @@ class WalletManagementViewModel {
     func addAccount(_ account: WalletAccount) {
         let walletAddress = account.walletId
         
-        // 检查账户名称是否重复
+        // Check if account name is duplicate
         let uniqueName = generateUniqueAccountName(baseName: account.name, walletAddress: walletAddress)
         let uniqueAccount = WalletAccount(
             id: account.id,
@@ -251,18 +251,18 @@ class WalletManagementViewModel {
             createdAt: account.createdAt
         )
         
-        // 添加到存储
+        // Add to storage
         if accountsStorage[walletAddress] == nil {
             accountsStorage[walletAddress] = []
         }
         accountsStorage[walletAddress]?.append(uniqueAccount)
         
-        // ✅ 更新UserDefaults中的账户计数
+        // ✅ Update account count in UserDefaults
         let accountCountKey = "accountCount_\(walletAddress)"
         let currentCount = UserDefaults.standard.integer(forKey: accountCountKey)
         UserDefaults.standard.set(currentCount + 1, forKey: accountCountKey)
         
-        // ✅ 使用WalletManagerSingleton的钱包列表更新UI
+        // ✅ Use WalletManagerSingleton wallet list to update UI
         let wallets = WalletManagerSingleton.shared.allWalletsSubject.value
         let sections = createWalletSections(from: wallets)
         walletSectionsSubject.accept(sections)
@@ -276,7 +276,7 @@ class WalletManagementViewModel {
             return baseName
         }
         
-        // 如果名称重复，添加数字后缀
+        // If name is duplicate, add number suffix
         var counter = 2
         var uniqueName = "\(baseName) \(counter)"
         
@@ -289,7 +289,7 @@ class WalletManagementViewModel {
     }
     
     func clearAllWallets() {
-        // ✅ 使用WalletManagerSingleton清空所有钱包
+        // ✅ Use WalletManagerSingleton to clear all wallets
         WalletManagerSingleton.shared.clearAllWallets()
         
         // Clear accounts storage
@@ -327,7 +327,7 @@ class WalletManagementViewModel {
     }
     
     private func switchToWallet(_ wallet: Wallet) {
-        // ✅ 使用WalletManagerSingleton设置当前钱包
+        // ✅ Use WalletManagerSingleton to set current wallet
         WalletManagerSingleton.shared.setCurrentWallet(wallet)
         
         walletSwitchedSubject.accept(wallet)

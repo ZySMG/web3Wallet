@@ -9,14 +9,14 @@
 import Foundation
 import RxSwift
 
-/// 价格服务协议
+/// Price service protocol
 protocol PriceServiceProtocol {
     func getETHPrice() -> Observable<Decimal>
     func getTokenPrices(currencies: [Currency]) -> Observable<[String: Decimal]>
     func getPriceHistory(currency: Currency, days: Int) -> Observable<[PricePoint]>
 }
 
-/// 价格数据点
+/// Price data point
 struct PricePoint: Codable {
     let timestamp: Date
     let price: Decimal
@@ -39,7 +39,7 @@ struct PricePoint: Codable {
     }
 }
 
-/// CoinGecko 价格响应
+/// CoinGecko price response
 struct CoinGeckoPriceResponse: Codable {
     let ethereum: TokenPrice?
     let tether: TokenPrice?
@@ -56,7 +56,7 @@ struct TokenPrice: Codable {
     let usd: Decimal
 }
 
-/// CoinGecko 价格历史响应
+/// CoinGecko price history response
 struct CoinGeckoPriceHistoryResponse: Codable {
     let prices: [[Double]]
     
@@ -70,7 +70,7 @@ struct CoinGeckoPriceHistoryResponse: Codable {
     }
 }
 
-/// 价格服务实现
+/// Price service implementation
 class PriceService: PriceServiceProtocol {
     
     private let networkService: NetworkServiceProtocol

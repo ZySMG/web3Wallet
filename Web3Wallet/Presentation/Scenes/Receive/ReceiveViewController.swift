@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 接收页面视图控制器
+/// Receive page view controller
 class ReceiveViewController: UIViewController {
     
     var viewModel: ReceiveViewModel!
@@ -51,13 +51,13 @@ class ReceiveViewController: UIViewController {
         addressLabel.layer.cornerRadius = 8
         addressLabel.layer.masksToBounds = true
         
-        // 配置二维码图片
+        // Configure QR code image
         qrCodeImageView.contentMode = .scaleAspectFit
         qrCodeImageView.backgroundColor = UIColor.white
         qrCodeImageView.layer.cornerRadius = 8
         qrCodeImageView.layer.masksToBounds = true
         
-        // 配置复制按钮
+        // Configure copy button
         copyButton.setTitle("receive.copy_address".localized, for: .normal)
         copyButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         copyButton.backgroundColor = UIColor.systemBlue
@@ -114,21 +114,21 @@ class ReceiveViewController: UIViewController {
         // Set network label text
         networkLabel.text = wallet?.network.name ?? "Unknown Network"
         
-        // ✅ 监听钱包切换通知，更新Receive页面
+        // ✅ Listen to wallet switching notifications, update Receive page
         NotificationCenter.default.rx
             .notification(.walletSwitched)
             .compactMap { $0.object as? Wallet }
             .subscribe(onNext: { [weak self] newWallet in
                 guard let self = self else { return }
                 
-                // ✅ 更新钱包和ViewModel
+                // ✅ Update wallet and ViewModel
                 self.wallet = newWallet
                 self.viewModel = ReceiveViewModel(wallet: newWallet)
                 
-                // ✅ 重新创建disposeBag避免重复绑定
+                // ✅ Recreate disposeBag to avoid duplicate bindings
                 self.disposeBag = DisposeBag()
                 
-                // ✅ 重新绑定UI
+                // ✅ Rebind UI
                 self.bindViewModel()
                 self.networkLabel.text = newWallet.network.name
                 
@@ -140,7 +140,7 @@ class ReceiveViewController: UIViewController {
     // MARK: - Load Current Wallet
     
     private func loadCurrentWallet() {
-        // ✅ 从Keychain加载当前活跃钱包
+        // ✅ Load current active wallet from Keychain
         let keychainStorage = KeychainStorageService()
         guard let walletString = keychainStorage.retrieve(key: "current_wallet"),
               let walletData = walletString.data(using: .utf8) else {
@@ -150,14 +150,14 @@ class ReceiveViewController: UIViewController {
         do {
             let currentWallet = try JSONDecoder().decode(Wallet.self, from: walletData)
             
-            // ✅ 更新钱包和ViewModel
+            // ✅ Update wallet and ViewModel
             self.wallet = currentWallet
             self.viewModel = ReceiveViewModel(wallet: currentWallet)
             
-            // ✅ 重新创建disposeBag避免重复绑定
+            // ✅ Recreate disposeBag to avoid duplicate bindings
             self.disposeBag = DisposeBag()
             
-            // ✅ 重新绑定UI
+            // ✅ Rebind UI
             self.bindViewModel()
             self.networkLabel.text = currentWallet.network.name
             
@@ -193,7 +193,7 @@ class ReceiveViewController: UIViewController {
     }
 }
 
-/// 接收页面视图模型
+/// Receive page view model
 class ReceiveViewModel {
     
     struct Input {

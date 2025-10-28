@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// 缓存项
+/// Cache item
 struct CacheItem<T: Codable> {
     let value: T
     let timestamp: Date
@@ -19,7 +19,7 @@ struct CacheItem<T: Codable> {
     }
 }
 
-/// 缓存服务协议
+/// Cache service protocol
 protocol CacheServiceProtocol {
     func set<T: Codable>(key: String, value: T, ttl: TimeInterval)
     func get<T: Codable>(key: String, type: T.Type) -> T?
@@ -29,7 +29,7 @@ protocol CacheServiceProtocol {
     func exists(key: String) -> Bool
 }
 
-/// 缓存服务实现
+/// Cache service implementation
 class CacheService: CacheServiceProtocol {
     
     private var cache: [String: Any] = [:]
@@ -93,7 +93,7 @@ class CacheService: CacheServiceProtocol {
         }
     }
     
-    /// 清理过期的缓存项
+    /// Clean expired cache items
     func cleanupExpiredItems() {
         queue.async(flags: .barrier) {
             let now = Date()
@@ -106,7 +106,7 @@ class CacheService: CacheServiceProtocol {
         }
     }
     
-    /// 获取缓存统计信息
+    /// Get cache statistics
     func getCacheStats() -> (count: Int, size: Int) {
         return queue.sync {
             let count = cache.count
@@ -116,7 +116,7 @@ class CacheService: CacheServiceProtocol {
     }
 }
 
-/// 缓存键常量
+/// Cache key constants
 struct CacheKeys {
     static let balancePrefix = "balance_"
     static let pricePrefix = "price_"

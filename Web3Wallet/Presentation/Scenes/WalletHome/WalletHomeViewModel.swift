@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-/// 钱包首页输入
+/// Wallet home page input
 struct WalletHomeInput {
     let refreshTrigger = PublishRelay<Void>()
     let receiveTrigger = PublishRelay<Void>()
@@ -21,7 +21,7 @@ struct WalletHomeInput {
     let transactionSelected = PublishRelay<Transaction>()
 }
 
-/// 钱包首页输出
+/// Wallet home page output
 struct WalletHomeOutput {
     let totalBalance: Driver<String>
     let balances: Driver<[Balance]>
@@ -38,7 +38,7 @@ struct WalletHomeOutput {
     let accountName: Driver<String>
 }
 
-/// 钱包首页视图模型
+/// Wallet home page view model
 class WalletHomeViewModel {
     
     let input = WalletHomeInput()
@@ -70,7 +70,7 @@ class WalletHomeViewModel {
         self.fetchTxHistoryUseCase = fetchTxHistoryUseCase
         self.priceService = priceService
         
-        // 创建输出
+        // Create output
         self.output = WalletHomeOutput(
             totalBalance: totalBalanceSubject.asDriver(),
             balances: balancesSubject.asDriver(),
@@ -102,14 +102,14 @@ class WalletHomeViewModel {
     }
     
     private func setupBindings() {
-        // 刷新触发
+        // Refresh trigger
         input.refreshTrigger
             .subscribe(onNext: { [weak self] in
                 self?.refreshData()
             })
             .disposed(by: disposeBag)
         
-        // 前台唤醒刷新
+        // Foreground wake refresh
         NotificationCenter.default.rx
             .notification(UIApplication.willEnterForegroundNotification)
             .map { _ in () }
@@ -124,20 +124,20 @@ class WalletHomeViewModel {
     private func refreshData() {
         isLoadingSubject.accept(true)
         
-        // 创建当前网络的钱包实例
+        // Create wallet instance for current network
         let currentWallet = Wallet(
             address: wallet.address,
             network: currentNetwork,
             isImported: wallet.isImported
         )
         
-        // 获取余额 - 添加延迟避免API频率限制
+        // Get balances - add delay to avoid API rate limiting
         resolveBalancesUseCase.resolveBalances(for: currentWallet, currencies: Currency.supportedCurrencies)
             .delay(.milliseconds(200), scheduler: MainScheduler.instance) // 200ms延迟
             .subscribe(onNext: { [weak self] balances in
                 self?.balancesSubject.accept(balances)
                 self?.isLoadingSubject.accept(false)
-                // self?.updateTotalBalance(balances) // 暂时不直接更新，等待价格数据
+                // self?.updateTotalBalance(balances) // Temporarily not updating directly, waiting for price data
             }, onError: { [weak self] error in
                 self?.isLoadingSubject.accept(false)
                 
@@ -169,7 +169,7 @@ class WalletHomeViewModel {
             })
             .disposed(by: disposeBag)
         
-        // 获取交易历史 - 添加延迟避免API频率限制
+        // Get transaction history - add delay to avoid API rate limiting
         fetchTxHistoryUseCase.fetchTransactionHistory(for: currentWallet, limit: 10)
             .delay(.milliseconds(400), scheduler: MainScheduler.instance) // 400ms延迟
             .subscribe(onNext: { [weak self] transactions in
@@ -193,7 +193,7 @@ class WalletHomeViewModel {
             })
             .disposed(by: disposeBag)
         
-        // 获取价格 - 添加延迟避免API频率限制
+        // Get prices - add delay to avoid API rate limiting
         priceService.getTokenPrices(currencies: Currency.supportedCurrencies)
             .delay(.milliseconds(600), scheduler: MainScheduler.instance) // 600ms延迟
             .subscribe(onNext: { [weak self] prices in
@@ -217,7 +217,7 @@ class WalletHomeViewModel {
             })
             .disposed(by: disposeBag)
         
-        // 完成加载
+        // Complete loading
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.isLoadingSubject.accept(false)
         }
@@ -243,7 +243,7 @@ class WalletHomeViewModel {
                             )
                         }
                         
-                        // 过滤余额：ETH、USDC、USDT始终显示（包括0余额），其他代币只显示非零余额
+                        // Filter balances: ETH, USDC, USDT always show (including 0 balance), other tokens only show non-zero balance
                         let filteredBalances = updatedBalances.filter { balance in
                             let alwaysShowSymbols = ["ETH", "USDC", "USDT"]
                             if alwaysShowSymbols.contains(balance.currency.symbol) {
@@ -262,7 +262,7 @@ class WalletHomeViewModel {
         currentNetwork = network
         currentNetworkSubject.accept(network.name)
         
-        // 切换网络后重新加载数据
+        // Reload data after network switch
         refreshData()
     }
     
@@ -271,12 +271,12 @@ class WalletHomeViewModel {
     }
     
     func switchToWallet(_ wallet: Wallet) {
-        // 更新当前钱包
+        // Update current wallet
         self.wallet = wallet
         currentNetwork = wallet.network
         currentNetworkSubject.accept(wallet.network.name)
         
-        // 重新加载数据
+        // Reload data
         refreshData()
     }
 }

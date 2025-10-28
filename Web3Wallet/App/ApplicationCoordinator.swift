@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 应用协调器
+/// Application coordinator
 class ApplicationCoordinator: BaseCoordinator {
     
     private let disposeBag = DisposeBag()
@@ -22,19 +22,19 @@ class ApplicationCoordinator: BaseCoordinator {
     }
     
     override func start() {
-        // 检查是否有现有钱包
+        // Check if there are existing wallets
         if WalletManagerSingleton.shared.hasWallets() {
             showWalletHome()
         } else {
             showOnboarding()
         }
         
-        // 监听钱包创建/导入事件
+        // Listen to wallet creation/import events
         setupWalletNotifications()
     }
     
     private func hasExistingWallet() -> Bool {
-        // 使用WalletManagerSingleton检查是否有钱包
+        // Use WalletManagerSingleton to check if there are wallets
         return WalletManagerSingleton.shared.hasWallets()
     }
     
@@ -45,9 +45,9 @@ class ApplicationCoordinator: BaseCoordinator {
     }
     
     private func showWalletHome() {
-        // 从 WalletManagerSingleton 获取当前钱包
+        // Get current wallet from WalletManagerSingleton
         guard let wallet = WalletManagerSingleton.shared.currentWalletSubject.value else {
-            // 如果没有钱包，显示入门流程
+            // If no wallet, show onboarding flow
             showOnboarding()
             return
         }
@@ -87,10 +87,10 @@ class ApplicationCoordinator: BaseCoordinator {
     private func handleWalletCreated(_ wallet: Wallet?) {
         guard let wallet = wallet else { return }
         
-        // ✅ 使用WalletManagerSingleton添加钱包
+        // ✅ Use WalletManagerSingleton to add wallet
         WalletManagerSingleton.shared.addWallet(wallet)
         
-        // 切换到钱包首页
+        // Switch to wallet home page
         removeAllChildCoordinators()
         showWalletHome()
     }
@@ -98,10 +98,10 @@ class ApplicationCoordinator: BaseCoordinator {
     private func handleWalletImported(_ wallet: Wallet?) {
         guard let wallet = wallet else { return }
         
-        // ✅ 使用WalletManagerSingleton添加钱包
+        // ✅ Use WalletManagerSingleton to add wallet
         WalletManagerSingleton.shared.addWallet(wallet)
         
-        // 切换到钱包首页
+        // Switch to wallet home page
         removeAllChildCoordinators()
         showWalletHome()
     }

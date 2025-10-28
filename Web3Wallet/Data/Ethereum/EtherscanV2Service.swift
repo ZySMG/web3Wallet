@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import Alamofire
 
-/// Etherscan API V2 服务
+/// Etherscan API V2 service
 /// Uses unified V2 endpoint (https://api.etherscan.io/v2/api) with mandatory chainid (e.g., 11155111 for Sepolia).
 class EtherscanV2Service {
     
@@ -24,7 +24,7 @@ class EtherscanV2Service {
         self.chainId = chainId
     }
     
-    /// 获取ETH余额 (V2 API)
+    /// Get ETH balance (V2 API)
     func getETHBalance(address: String, chainId: Int) -> Observable<String> {
         return Observable.create { observer in
             let url = self.baseURL
@@ -90,7 +90,7 @@ class EtherscanV2Service {
         }
     }
     
-    /// 获取代币余额 (V2 API)
+    /// Get token balance (V2 API)
     func getTokenBalance(address: String, contractAddress: String, chainId: Int, decimals: Int = 18) -> Observable<String> {
         return Observable.create { observer in
             let url = self.baseURL
@@ -157,7 +157,7 @@ class EtherscanV2Service {
         }
     }
     
-    /// 获取交易历史 (V2 API)
+    /// Get transaction history (V2 API)
     func getTransactionHistory(address: String, limit: Int = 10) -> Observable<[Transaction]> {
         return Observable.create { observer in
             let url = self.baseURL

@@ -10,13 +10,13 @@ import Foundation
 import RxSwift
 import Alamofire
 
-/// 网络服务协议
+/// Network service protocol
 protocol NetworkServiceProtocol {
     func request<T: Codable>(_ endpoint: APIEndpoint, responseType: T.Type) -> Observable<T>
     func requestData(_ endpoint: APIEndpoint) -> Observable<Data>
 }
 
-/// 网络服务实现
+/// Network service implementation
 class NetworkService: NetworkServiceProtocol {
     
     private let session: Session
@@ -90,7 +90,7 @@ class NetworkService: NetworkServiceProtocol {
     }
 }
 
-/// 网络错误
+/// Network error
 enum NetworkError: Error, LocalizedError {
     case requestFailed(Error)
     case decodingError(Error)

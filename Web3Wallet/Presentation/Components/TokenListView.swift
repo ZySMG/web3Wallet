@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// Token 列表视图
+/// Token list view
 class TokenListView: UIView {
     
     private let titleLabel = UILabel()
@@ -30,12 +30,12 @@ class TokenListView: UIView {
     private func setupUI() {
         backgroundColor = UIColor.clear
         
-        // 设置标题
+        // Setup title
         titleLabel.text = "代币"
         titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
         titleLabel.textColor = UIColor.white
         
-        // 设置表格视图
+        // Setup table view
         tableView.register(TokenCell.self, forCellReuseIdentifier: "TokenCell")
         tableView.separatorStyle = .none
         tableView.backgroundColor = UIColor.clear
@@ -65,10 +65,10 @@ class TokenListView: UIView {
 extension Reactive where Base: TokenListView {
     var balances: Binder<[Balance]> {
         return Binder(base) { view, balances in
-            // 清除之前的绑定
+            // Clear previous bindings
             view.disposeBag = DisposeBag()
             
-            // 设置数据源
+            // Setup data source
             Observable.just(balances)
                 .bind(to: view.tableView.rx.items(cellIdentifier: "TokenCell", cellType: TokenCell.self)) { _, balance, cell in
                     cell.configure(with: balance)
@@ -78,7 +78,7 @@ extension Reactive where Base: TokenListView {
     }
 }
 
-/// Token 单元格
+/// Token cell
 class TokenCell: UITableViewCell {
     
     private let nameLabel = UILabel()
@@ -99,11 +99,11 @@ class TokenCell: UITableViewCell {
         selectionStyle = .none
         backgroundColor = UIColor.clear
         
-        // 设置背景
+        // Setup background
         contentView.backgroundColor = UIColor.systemGray6
         contentView.layer.cornerRadius = 12
         
-        // 设置标签
+        // Setup labels
         nameLabel.font = UIFont.boldSystemFont(ofSize: 16)
         nameLabel.textColor = UIColor.label
         

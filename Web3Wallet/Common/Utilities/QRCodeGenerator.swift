@@ -10,10 +10,10 @@ import Foundation
 import UIKit
 import CoreImage
 
-/// 二维码生成器
+/// QR code generator
 class QRCodeGenerator {
     
-    /// 生成二维码图片
+    /// Generate QR code image
     static func generateQRCode(from string: String, size: CGSize = CGSize(width: 200, height: 200)) -> UIImage? {
         guard let data = string.data(using: .utf8) else { return nil }
         
@@ -32,7 +32,7 @@ class QRCodeGenerator {
         return UIImage(cgImage: cgImage)
     }
     
-    /// 生成带颜色的二维码图片
+    /// Generate QR code image with color
     static func generateQRCode(from string: String, 
                              size: CGSize = CGSize(width: 200, height: 200),
                              foregroundColor: UIColor = .black,
@@ -48,7 +48,7 @@ class QRCodeGenerator {
         }
     }
     
-    /// 生成带 Logo 的二维码图片
+    /// Generate QR code image with logo
     static func generateQRCodeWithLogo(from string: String,
                                      size: CGSize = CGSize(width: 200, height: 200),
                                      logo: UIImage?,
@@ -57,10 +57,10 @@ class QRCodeGenerator {
         
         let renderer = UIGraphicsImageRenderer(size: size)
         return renderer.image { context in
-            // 绘制二维码
+            // Draw QR code
             qrImage.draw(in: CGRect(origin: .zero, size: size))
             
-            // 绘制 Logo
+            // Draw logo
             if let logo = logo {
                 let logoRect = CGRect(
                     x: (size.width - logoSize.width) / 2,
@@ -69,31 +69,31 @@ class QRCodeGenerator {
                     height: logoSize.height
                 )
                 
-                // 绘制白色背景
+                // Draw white background
                 UIColor.white.setFill()
                 context.fill(logoRect.insetBy(dx: -2, dy: -2))
                 
-                // 绘制 Logo
+                // Draw logo
                 logo.draw(in: logoRect)
             }
         }
     }
     
-    /// 生成钱包地址二维码
+    /// Generate wallet address QR code
     static func generateWalletQRCode(address: String, 
                                    size: CGSize = CGSize(width: 200, height: 200),
                                    includeLogo: Bool = true) -> UIImage? {
         let qrString = "ethereum:\(address)"
         
         if includeLogo {
-            // 这里可以添加钱包 Logo
+            // Wallet logo can be added here
             return generateQRCodeWithLogo(from: qrString, size: size, logo: nil)
         } else {
             return generateQRCode(from: qrString, size: size)
         }
     }
     
-    /// 生成支付二维码
+    /// Generate payment QR code
     static func generatePaymentQRCode(address: String,
                                     amount: Decimal?,
                                     token: String = "ETH",
@@ -112,7 +112,7 @@ class QRCodeGenerator {
     }
 }
 
-/// 二维码扫描结果
+/// QR code scan result
 struct QRCodeScanResult {
     let string: String
     let type: QRCodeType
@@ -142,15 +142,15 @@ struct QRCodeScanResult {
     }
 }
 
-/// 二维码工具扩展
+/// QR code utility extension
 extension UIImage {
     
-    /// 生成二维码
+    /// Generate QR code
     static func qrCode(from string: String, size: CGSize = CGSize(width: 200, height: 200)) -> UIImage? {
         return QRCodeGenerator.generateQRCode(from: string, size: size)
     }
     
-    /// 生成带颜色的二维码
+    /// Generate QR code with color
     static func qrCode(from string: String, 
                       size: CGSize = CGSize(width: 200, height: 200),
                       foregroundColor: UIColor = .black,

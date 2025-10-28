@@ -181,12 +181,12 @@ class WalletManagementViewController: UIViewController {
         let addAccountVC = AddAccountViewController()
         addAccountVC.wallet = wallet
         
-        // ✅ 从Keychain获取助记词
+        // ✅ Get mnemonic from Keychain
         let keychainStorage = KeychainStorageService()
         if let mnemonic = keychainStorage.retrieve(key: "mnemonic_\(wallet.address)") {
             addAccountVC.mnemonic = mnemonic
         } else {
-            // 如果没有找到助记词，显示错误
+            // If mnemonic not found, show error
             let alert = UIAlertController(title: "Error", message: "Mnemonic not found for this wallet", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default))
             present(alert, animated: true)
@@ -372,7 +372,7 @@ class AccountCell: UITableViewCell {
         deleteButton.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
         
-        // ✅ 配置选中状态指示器
+        // ✅ Configure selection state indicator
         selectedIndicator.text = "✅"
         selectedIndicator.font = UIFont.systemFont(ofSize: 20)
         selectedIndicator.textAlignment = .center
@@ -393,7 +393,7 @@ class AccountCell: UITableViewCell {
             deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             deleteButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
-            // ✅ 选中状态指示器约束
+            // ✅ Selection state indicator constraints
             selectedIndicator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             selectedIndicator.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             selectedIndicator.widthAnchor.constraint(equalToConstant: 30),
@@ -408,7 +408,7 @@ class AccountCell: UITableViewCell {
         nameLabel.text = account.name
         addressLabel.text = account.address
         
-        // ✅ 显示选中状态
+        // ✅ Show selection state
         selectedIndicator.isHidden = !account.isSelected
     }
     

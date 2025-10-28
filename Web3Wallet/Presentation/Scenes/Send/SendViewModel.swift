@@ -37,15 +37,15 @@ class SendViewModel {
     let ethereumService: EthereumServiceProtocol
     let sendTransactionUseCase: SendTransactionUseCaseProtocol
     private let balanceSubject: BehaviorRelay<String>
-    let selectedCurrency: Currency // 改为public以便ViewController访问
+    let selectedCurrency: Currency
     
-    // ✅ 新增：存储当前余额数值和Gas估算
+    // ✅ Added: Store current balance value and gas estimate
     private let currentBalanceSubject = BehaviorRelay<Decimal>(value: 0)
-    let currentGasEstimateSubject = BehaviorRelay<GasEstimate?>(value: nil) // 改为public以便ViewController访问
-    var wallet: Wallet // 改为public以便ViewController访问，并改为var
-    let disposeBag = DisposeBag() // 改为public以便ViewController访问
+    let currentGasEstimateSubject = BehaviorRelay<GasEstimate?>(value: nil)
+    var wallet: Wallet
+    let disposeBag = DisposeBag()
     
-    // ✅ 新增：存储UI相关的Subject
+    // ✅ Added: Store UI-related Subjects
     let gasPriceSubject: BehaviorRelay<String>
     let gasLimitSubject: BehaviorRelay<String>
     let feeSubject: BehaviorRelay<String>
@@ -53,7 +53,7 @@ class SendViewModel {
     let addressValidationSubject: BehaviorRelay<String>
     let insufficientBalanceSubject: BehaviorRelay<String>
     let errorSubject: PublishRelay<Error>
-    let gasCountdownTriggerSubject: PublishRelay<Void> // 新增：触发Gas倒计时的Subject
+    let gasCountdownTriggerSubject: PublishRelay<Void> 
     
     init(wallet: Wallet, estimateGasUseCase: EstimateGasUseCaseProtocol, ethereumService: EthereumServiceProtocol, sendTransactionUseCase: SendTransactionUseCaseProtocol, selectedCurrency: Currency = Currency.eth) {
         self.wallet = wallet
@@ -237,7 +237,7 @@ class SendViewModel {
             .disposed(by: disposeBag)
     }
     
-    // ✅ 新增：更新钱包的方法
+    // ✅ Added: Method to update wallet
     func updateWallet(_ newWallet: Wallet) {
         self.wallet = newWallet
         loadWalletBalance()

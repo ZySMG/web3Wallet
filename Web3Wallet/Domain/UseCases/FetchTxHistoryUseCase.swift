@@ -37,7 +37,7 @@ class FetchTxHistoryUseCase: FetchTxHistoryUseCaseProtocol {
         return txService.getTransactionHistory(address: wallet.address, network: wallet.network, limit: limit)
             .do(onNext: { transactions in
                 // Cache results
-                self.cacheService.set(key: cacheKey, value: transactions, ttl: 90) // 90秒缓存
+                self.cacheService.set(key: cacheKey, value: transactions, ttl: 90) // 90 second cache
             })
     }
 }

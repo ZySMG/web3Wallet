@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 交易历史视图控制器
+/// Transaction history view controller
 class TransactionHistoryViewController: UIViewController {
     
     var viewModel: TransactionHistoryViewModel!
@@ -122,7 +122,7 @@ class TransactionHistoryViewController: UIViewController {
         // Bind transaction selection
         tableView.rx.modelSelected(Transaction.self)
             .do(onNext: { [weak self] _ in
-                // ✅ 取消cell的选中状态
+                // ✅ Cancel cell selection state
                 if let selectedIndexPath = self?.tableView.indexPathForSelectedRow {
                     self?.tableView.deselectRow(at: selectedIndexPath, animated: true)
                 }
@@ -165,7 +165,7 @@ class TransactionHistoryViewController: UIViewController {
             .subscribe(onNext: { [weak self] newWallet in
                 guard let self = self else { return }
                 
-                // ✅ 更新ViewModel的钱包
+                // ✅ Update ViewModel wallet
                 self.viewModel.updateWallet(newWallet)
                 
                 print("🔄 Transaction history page updated for wallet: \(newWallet.address)")

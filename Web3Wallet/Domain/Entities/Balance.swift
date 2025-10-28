@@ -8,26 +8,26 @@
 
 import Foundation
 
-/// 余额实体
-/// 表示特定代币的余额信息
+/// Balance entity
+/// Represents balance information for a specific token
 struct Balance: Equatable, Codable {
     let currency: Currency
     let amount: Decimal
     let usdValue: Decimal?
     let lastUpdated: Date
     
-    /// 格式化的余额显示
+    /// Formatted balance display
     var formattedAmount: String {
         return formatAmount(amount, decimals: currency.decimals)
     }
     
-    /// 格式化的 USD 价值显示
+    /// Formatted USD value display
     var formattedUSDValue: String {
         guard let usdValue = usdValue else { return "N/A" }
         return String(format: "$%.2f", usdValue.doubleValue)
     }
     
-    /// 是否为有效余额（大于0）
+    /// Whether it's a valid balance (greater than 0)
     var isValid: Bool {
         return amount > 0
     }

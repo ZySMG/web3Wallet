@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 钱包协调器
+/// Wallet coordinator
 class WalletCoordinator: BaseCoordinator {
     
     private let disposeBag = DisposeBag()
@@ -38,7 +38,7 @@ class WalletCoordinator: BaseCoordinator {
         homeVC.viewModel = homeVM
         homeVC.appContainer = appContainer // 设置appContainer
         
-        // 绑定事件
+        // Bind events
         homeVM.output.showReceive
             .drive(onNext: { [weak self] wallet in
                 self?.showReceive(wallet: wallet)
@@ -57,7 +57,7 @@ class WalletCoordinator: BaseCoordinator {
             })
             .disposed(by: disposeBag)
         
-        // 绑定Send按钮点击事件
+        // Bind Send button click event
         homeVC.sendButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 guard let self = self else { return }
@@ -78,32 +78,32 @@ class WalletCoordinator: BaseCoordinator {
     }
     
     private func showSend(wallet: Wallet) {
-        // 显示币种选择
+        // Show currency selection
         showCurrencySelection(for: wallet)
     }
     
     private func showCurrencySelection(for wallet: Wallet) {
         let alert = UIAlertController(title: "Select Currency", message: "Choose the currency you want to send", preferredStyle: .actionSheet)
         
-        // 添加ETH选项
+        // Add ETH option
         alert.addAction(UIAlertAction(title: "ETH", style: .default) { [weak self] _ in
             self?.showSendViewController(wallet: wallet, currency: Currency.eth)
         })
         
-        // 添加USDC选项
+        // Add USDC option
         alert.addAction(UIAlertAction(title: "USDC", style: .default) { [weak self] _ in
             self?.showSendViewController(wallet: wallet, currency: Currency.usdc)
         })
         
-        // 添加USDT选项
+        // Add USDT option
         alert.addAction(UIAlertAction(title: "USDT", style: .default) { [weak self] _ in
             self?.showSendViewController(wallet: wallet, currency: Currency.usdt)
         })
         
-        // 添加取消选项
+        // Add cancel option
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
-        // 为iPad设置popover
+        // Set popover for iPad
         if let popover = alert.popoverPresentationController {
             popover.sourceView = navigationController.view
             popover.sourceRect = CGRect(x: navigationController.view.bounds.midX, y: navigationController.view.bounds.midY, width: 0, height: 0)
@@ -117,7 +117,7 @@ class WalletCoordinator: BaseCoordinator {
         let sendVC = SendViewController()
         let sendTransactionUseCase = SendTransactionUseCase(ethereumService: appContainer.ethereumService)
         
-        // ✅ 使用WalletManagerSingleton的当前钱包，而不是传入的wallet
+        // ✅ Use WalletManagerSingleton current wallet instead of passed wallet
         guard let currentWallet = WalletManagerSingleton.shared.currentWalletSubject.value else {
             print("❌ No current wallet found in WalletManagerSingleton")
             return

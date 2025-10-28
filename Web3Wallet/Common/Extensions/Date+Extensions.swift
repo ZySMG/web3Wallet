@@ -40,7 +40,7 @@ extension Date {
         return formatter.string(from: self)
     }
     
-    /// 格式化为时间字符串
+    /// Format as time string
     var timeString: String {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
@@ -48,68 +48,68 @@ extension Date {
         return formatter.string(from: self)
     }
     
-    /// 格式化为 ISO 8601 字符串
+    /// Format as ISO 8601 string
     var iso8601String: String {
         let formatter = ISO8601DateFormatter()
         return formatter.string(from: self)
     }
     
-    /// 检查是否为今天
+    /// Check if it's today
     var isToday: Bool {
         return Calendar.current.isDateInToday(self)
     }
     
-    /// 检查是否为昨天
+    /// Check if it's yesterday
     var isYesterday: Bool {
         return Calendar.current.isDateInYesterday(self)
     }
     
-    /// 检查是否为本周
+    /// Check if it's this week
     var isThisWeek: Bool {
         return Calendar.current.isDate(self, equalTo: Date(), toGranularity: .weekOfYear)
     }
     
-    /// 检查是否为今年
+    /// Check if it's this year
     var isThisYear: Bool {
         return Calendar.current.isDate(self, equalTo: Date(), toGranularity: .year)
     }
     
-    /// 获取时间戳（秒）
+    /// Get timestamp (seconds)
     var timestamp: TimeInterval {
         return timeIntervalSince1970
     }
     
-    /// 获取时间戳（毫秒）
+    /// Get timestamp (milliseconds)
     var timestampMilliseconds: Int64 {
         return Int64(timeIntervalSince1970 * 1000)
     }
     
-    /// 添加天数
+    /// Add days
     func addingDays(_ days: Int) -> Date {
         return Calendar.current.date(byAdding: .day, value: days, to: self) ?? self
     }
     
-    /// 添加小时
+    /// Add hours
     func addingHours(_ hours: Int) -> Date {
         return Calendar.current.date(byAdding: .hour, value: hours, to: self) ?? self
     }
     
-    /// 添加分钟
+    /// Add minutes
     func addingMinutes(_ minutes: Int) -> Date {
         return Calendar.current.date(byAdding: .minute, value: minutes, to: self) ?? self
     }
     
-    /// 添加秒
+    /// Add seconds
     func addingSeconds(_ seconds: Int) -> Date {
         return Calendar.current.date(byAdding: .second, value: seconds, to: self) ?? self
     }
     
-    /// 获取开始时间（00:00:00）
+    /// Get start time (00:00:00)
     var startOfDay: Date {
         return Calendar.current.startOfDay(for: self)
     }
     
-    /// 获取结束时间（23:59:59）
+    /// Get end time (23:59:59)
     var endOfDay: Date {
         var components = Calendar.current.dateComponents([.year, .month, .day], from: self)
         components.hour = 23

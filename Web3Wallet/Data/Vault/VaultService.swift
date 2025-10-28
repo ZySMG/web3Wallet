@@ -10,7 +10,7 @@ import Foundation
 import Security
 import CryptoKit
 
-/// 加密的钱包数据结构
+/// Encrypted wallet data structure
 struct EncryptedWalletData: Codable {
     let encryptedSeed: Data
     let salt: Data
@@ -20,28 +20,28 @@ struct EncryptedWalletData: Codable {
     let timestamp: Date
 }
 
-/// 金库服务协议
+/// Vault service protocol
 protocol VaultServiceProtocol {
-    /// 存储加密的钱包数据
+    /// Store encrypted wallet data
     func storeEncryptedWallet(walletId: String, encryptedData: EncryptedWalletData) -> Bool
     
-    /// 获取加密的钱包数据
+    /// Get encrypted wallet data
     func getEncryptedWallet(walletId: String) -> EncryptedWalletData?
     
-    /// 删除加密的钱包数据
+    /// Delete encrypted wallet data
     func deleteEncryptedWallet(walletId: String) -> Bool
     
-    /// 加密种子数据
+    /// Encrypt seed data
     func encryptSeed(_ seed: Data, password: String) -> EncryptedWalletData?
     
-    /// 解密种子数据
+    /// Decrypt seed data
     func decryptSeed(_ encryptedData: EncryptedWalletData, password: String) -> Data?
     
-    /// 生成钱包指纹
+    /// Generate wallet fingerprint
     func generateFingerprint(from seed: Data) -> String
 }
 
-/// 金库服务实现
+/// Vault service implementation
 class VaultService: VaultServiceProtocol {
     
     private let keychainService: KeychainStorageServiceProtocol
@@ -88,16 +88,16 @@ class VaultService: VaultServiceProtocol {
     // MARK: - Encryption/Decryption
     
     func encryptSeed(_ seed: Data, password: String) -> EncryptedWalletData? {
-        // 生成随机盐和 nonce
+        // Generate random salt and nonce
         let salt = Data((0..<32).map { _ in UInt8.random(in: 0...255) })
         let nonce = Data((0..<12).map { _ in UInt8.random(in: 0...255) })
         
-        // 使用 Argon2id 派生密钥
+        // Use Argon2id to derive key
         guard let key = deriveKey(password: password, salt: salt) else {
             return nil
         }
         
-        // 使用 AES-GCM 加密
+        // Use AES-GCM encryption
         do {
             let symmetricKey = SymmetricKey(data: key)
             let sealedBox = try AES.GCM.seal(seed, using: symmetricKey, nonce: AES.GCM.Nonce(data: nonce))
@@ -117,12 +117,12 @@ class VaultService: VaultServiceProtocol {
     }
     
     func decryptSeed(_ encryptedData: EncryptedWalletData, password: String) -> Data? {
-        // 派生密钥
+        // Derive key
         guard let key = deriveKey(password: password, salt: encryptedData.salt) else {
             return nil
         }
         
-        // 使用 AES-GCM 解密
+        // Use AES-GCM decryption
         do {
             let symmetricKey = SymmetricKey(data: key)
             let sealedBox = try AES.GCM.SealedBox(
@@ -139,7 +139,7 @@ class VaultService: VaultServiceProtocol {
     }
     
     func generateFingerprint(from seed: Data) -> String {
-        // 使用 HMAC-SHA256 生成指纹
+        // Use HMAC-SHA256 to generate fingerprint
         let key = "Web3Wallet_Fingerprint_Key".data(using: .utf8)!
         let hmac = HMAC<SHA256>.authenticationCode(for: seed, using: SymmetricKey(data: key))
         return Data(hmac).base64EncodedString()
@@ -148,11 +148,11 @@ class VaultService: VaultServiceProtocol {
     // MARK: - Private Methods
     
     private func deriveKey(password: String, salt: Data) -> Data? {
-        // 简化的密钥派生（实际项目中应使用 Argon2id）
+        // Simplified key derivation (should use Argon2id in real project)
         let passwordData = password.data(using: .utf8)!
         let combined = passwordData + salt
         
-        // 使用 SHA256 进行多轮哈希
+        // Use SHA256 for multiple rounds of hashing
         var key = Data(SHA256.hash(data: combined))
         for _ in 0..<10000 {
             key = Data(SHA256.hash(data: key))
@@ -162,7 +162,7 @@ class VaultService: VaultServiceProtocol {
     }
 }
 
-/// 内存中的钱包会话
+/// In-memory wallet session
 class WalletSession {
     private var _seed: Data?
     private var _walletId: String?
@@ -191,7 +191,7 @@ class WalletSession {
     
     func clearMemory() {
         if let seed = _seed {
-            // 安全清除内存
+            // Securely clear memory
             var mutableSeed = seed
         mutableSeed.withUnsafeMutableBytes { bytes in
                 memset_s(bytes.baseAddress, bytes.count, 0, bytes.count)

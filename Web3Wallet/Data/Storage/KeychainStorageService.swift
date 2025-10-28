@@ -9,7 +9,7 @@
 import Foundation
 import Security
 
-/// Keychain 存储服务协议
+/// Keychain storage service protocol
 protocol KeychainStorageServiceProtocol {
     func store(key: String, value: String) -> Bool
     func retrieve(key: String) -> String?
@@ -17,7 +17,7 @@ protocol KeychainStorageServiceProtocol {
     func exists(key: String) -> Bool
 }
 
-/// Keychain 存储服务实现
+/// Keychain storage service implementation
 class KeychainStorageService: KeychainStorageServiceProtocol {
     
     private let service: String
@@ -29,7 +29,7 @@ class KeychainStorageService: KeychainStorageServiceProtocol {
     func store(key: String, value: String) -> Bool {
         guard let data = value.data(using: .utf8) else { return false }
         
-        // 删除已存在的项目
+        // Delete existing item
         delete(key: key)
         
         let query: [String: Any] = [
@@ -81,7 +81,7 @@ class KeychainStorageService: KeychainStorageServiceProtocol {
     }
 }
 
-/// Keychain 错误
+/// Keychain error
 enum KeychainError: Error, LocalizedError {
     case itemNotFound
     case duplicateItem

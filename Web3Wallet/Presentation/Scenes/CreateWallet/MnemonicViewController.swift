@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 助记词显示视图控制器
+/// Mnemonic display view controller
 class MnemonicViewController: UIViewController {
     
     var viewModel: MnemonicViewModel!
@@ -33,14 +33,14 @@ class MnemonicViewController: UIViewController {
         title = "onboarding.mnemonic.title".localized
         view.backgroundColor = UIColor.systemBackground
         
-        // 配置标题
+        // Configure title
         titleLabel.text = "onboarding.mnemonic.title".localized
         titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
         titleLabel.textAlignment = .center
         titleLabel.textColor = UIColor.label
         titleLabel.numberOfLines = 0
         
-        // 配置助记词标签
+        // Configure mnemonic label
         mnemonicLabel.font = UIFont.systemFont(ofSize: 16)
         mnemonicLabel.textAlignment = .center
         mnemonicLabel.textColor = UIColor.label
@@ -49,34 +49,34 @@ class MnemonicViewController: UIViewController {
         mnemonicLabel.layer.cornerRadius = 8
         mnemonicLabel.layer.masksToBounds = true
         
-        // 配置警告标签
+        // Configure warning label
         warningLabel.text = "onboarding.mnemonic.warning".localized
         warningLabel.font = UIFont.systemFont(ofSize: 14)
         warningLabel.textAlignment = .center
         warningLabel.textColor = UIColor.systemRed
         warningLabel.numberOfLines = 0
         
-        // 配置复制按钮
+        // Configure copy button
         copyButton.setTitle("onboarding.mnemonic.copy".localized, for: .normal)
         copyButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         copyButton.backgroundColor = UIColor.systemGray5
         copyButton.setTitleColor(.label, for: .normal)
         copyButton.layer.cornerRadius = 8
         
-        // 配置确认按钮
+        // Configure confirm button
         confirmButton.setTitle("onboarding.mnemonic.confirm".localized, for: .normal)
         confirmButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         confirmButton.backgroundColor = UIColor.systemBlue
         confirmButton.setTitleColor(.white, for: .normal)
         confirmButton.layer.cornerRadius = 12
         
-        // 添加子视图
+        // Add subviews
         [titleLabel, mnemonicLabel, warningLabel, copyButton, confirmButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
         
-        // 设置约束
+        // Setup constraints
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
@@ -139,7 +139,7 @@ class MnemonicViewController: UIViewController {
     }
 }
 
-/// 助记词视图模型
+/// Mnemonic view model
 class MnemonicViewModel {
     
     struct Input {
@@ -176,7 +176,7 @@ class MnemonicViewModel {
             copySuccess: copySuccessSubject.asDriver(onErrorDriveWith: .never())
         )
         
-        // 绑定确认触发
+        // Bind confirm trigger
         input.confirmTrigger
             .flatMapLatest { [weak self] _ in
                 self?.generateWalletUseCase.generateWallet(from: mnemonic, network: Network.sepolia) ?? Observable.empty()

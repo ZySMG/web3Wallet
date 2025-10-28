@@ -10,12 +10,12 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 网络选择视图控制器
+/// Network selection view controller
 class NetworkSelectionViewController: UIViewController {
     
     var onNetworkSelected: ((Network) -> Void)?
     
-    // 设置当前网络的方法
+    // Method to set current network
     func setCurrentNetwork(_ network: Network) {
         currentNetwork = network
     }
@@ -40,22 +40,22 @@ class NetworkSelectionViewController: UIViewController {
         view.backgroundColor = UIColor.systemBackground
         title = "选择网络"
         
-        // 设置导航栏
+        // Setup navigation bar
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .cancel,
             target: self,
             action: #selector(dismissViewController)
         )
         
-        // 设置表格视图
+        // Setup table view
         tableView.register(NetworkCell.self, forCellReuseIdentifier: "NetworkCell")
         tableView.separatorStyle = .singleLine
         tableView.backgroundColor = UIColor.systemBackground
         
-        // 添加子视图
+        // Add subviews
         view.addSubview(tableView)
         
-        // 设置约束
+        // Setup constraints
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -67,7 +67,7 @@ class NetworkSelectionViewController: UIViewController {
     }
     
     private func setupBindings() {
-        // 绑定网络列表
+        // Bind network list
         Observable.just(networks)
             .bind(to: tableView.rx.items(cellIdentifier: "NetworkCell", cellType: NetworkCell.self)) { [weak self] _, network, cell in
                 let isSelected = network == self?.currentNetwork
@@ -75,7 +75,7 @@ class NetworkSelectionViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
-        // 绑定网络选择
+        // Bind network selection
         tableView.rx.modelSelected(Network.self)
             .subscribe(onNext: { [weak self] network in
                 self?.handleNetworkSelection(network)
@@ -89,11 +89,11 @@ class NetworkSelectionViewController: UIViewController {
     
     private func handleNetworkSelection(_ network: Network) {
         if network.isTestnet {
-            // 测试网：正常切换
+            // Testnet: normal switch
             onNetworkSelected?(network)
             dismiss(animated: true)
         } else {
-            // 主网：显示待开发提示
+            // Mainnet: show under development notice
             showUnderDevelopmentAlert()
         }
     }
@@ -109,7 +109,7 @@ class NetworkSelectionViewController: UIViewController {
     }
 }
 
-/// 网络单元格
+/// Network cell
 class NetworkCell: UITableViewCell {
     
     private let nameLabel = UILabel()
@@ -131,7 +131,7 @@ class NetworkCell: UITableViewCell {
         selectionStyle = .default
         backgroundColor = UIColor.systemBackground
         
-        // 设置标签
+        // Setup labels
         nameLabel.font = UIFont.boldSystemFont(ofSize: 16)
         nameLabel.textColor = UIColor.label
         
@@ -142,7 +142,7 @@ class NetworkCell: UITableViewCell {
         rpcLabel.textColor = UIColor.secondaryLabel
         rpcLabel.numberOfLines = 1
         
-        // 设置勾选图标
+        // Setup checkmark icon
         checkmarkImageView.image = UIImage(systemName: "checkmark")
         checkmarkImageView.tintColor = UIColor.systemBlue
         checkmarkImageView.contentMode = .scaleAspectFit
@@ -177,7 +177,7 @@ class NetworkCell: UITableViewCell {
         chainIdLabel.text = "Chain ID: \(network.chainId)"
         rpcLabel.text = network.rpcURL
         
-        // 显示选中状态
+        // Show selection state
         checkmarkImageView.isHidden = !isSelected
     }
 }

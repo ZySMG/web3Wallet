@@ -9,8 +9,8 @@
 import Foundation
 import RxSwift
 
-/// 解析余额用例
-/// 负责获取钱包的余额信息
+/// Resolve balances use case
+/// Responsible for getting wallet balance information
 protocol ResolveBalancesUseCaseProtocol {
     func resolveBalances(for wallet: Wallet, currencies: [Currency]) -> Observable<[Balance]>
 }
@@ -28,12 +28,12 @@ class ResolveBalancesUseCase: ResolveBalancesUseCaseProtocol {
     func resolveBalances(for wallet: Wallet, currencies: [Currency]) -> Observable<[Balance]> {
         let cacheKey = "balances_\(wallet.address)_\(wallet.network.chainId)"
         
-        // 检查缓存
+        // Check cache
         if let cachedBalances: [Balance] = cacheService.get(key: cacheKey) {
             return Observable.just(cachedBalances)
         }
         
-        // 确保ETH、USDC、USDT始终在列表中，即使余额为0
+        // Ensure ETH, USDC, USDT are always in the list, even with 0 balance
         var currenciesToFetch = currencies
         let alwaysIncludeSymbols = ["ETH", "USDC", "USDT"]
         
@@ -52,7 +52,7 @@ class ResolveBalancesUseCase: ResolveBalancesUseCaseProtocol {
             }
         }
         
-        // 获取余额
+        // Get balances
         return Observable.combineLatest(
             currenciesToFetch.map { currency in
                 ethereumService.getBalance(address: wallet.address, currency: currency, network: wallet.network)
@@ -62,7 +62,7 @@ class ResolveBalancesUseCase: ResolveBalancesUseCaseProtocol {
             }
         )
         .do(onNext: { balances in
-            // 缓存结果
+            // Cache result
             self.cacheService.set(key: cacheKey, value: balances, ttl: 20) // 20秒缓存
         })
     }

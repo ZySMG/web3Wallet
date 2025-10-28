@@ -9,7 +9,7 @@
 import UIKit
 import RxSwift
 
-/// 协调器协议
+/// Coordinator protocol
 protocol Coordinator: AnyObject {
     var childCoordinators: [Coordinator] { get set }
     var navigationController: UINavigationController { get set }
@@ -18,7 +18,7 @@ protocol Coordinator: AnyObject {
     func finish()
 }
 
-/// 协调器基类
+/// Base coordinator class
 class BaseCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
@@ -35,23 +35,23 @@ class BaseCoordinator: Coordinator {
         childCoordinators.removeAll()
     }
     
-    /// 添加子协调器
+    /// Add child coordinator
     func addChildCoordinator(_ coordinator: Coordinator) {
         childCoordinators.append(coordinator)
     }
     
-    /// 移除子协调器
+    /// Remove child coordinator
     func removeChildCoordinator(_ coordinator: Coordinator) {
         childCoordinators = childCoordinators.filter { $0 !== coordinator }
     }
     
-    /// 移除所有子协调器
+    /// Remove all child coordinators
     func removeAllChildCoordinators() {
         childCoordinators.removeAll()
     }
 }
 
-/// 协调器工厂
+/// Coordinator factory
 protocol CoordinatorFactory {
     func makeWalletCoordinator(navigationController: UINavigationController) -> WalletCoordinator
     func makeOnboardingCoordinator(navigationController: UINavigationController) -> OnboardingCoordinator

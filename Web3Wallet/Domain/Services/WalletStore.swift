@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-/// 钱包索引结构
+/// Wallet index structure
 struct WalletIndex: Codable, Equatable {
     let wallets: [Wallet]
     var activeWalletId: String?
@@ -27,43 +27,43 @@ struct WalletIndex: Codable, Equatable {
     }
 }
 
-/// 钱包存储服务协议
+/// Wallet storage service protocol
 protocol WalletStoreProtocol {
-    /// 获取钱包索引
+    /// Get wallet index
     func getWalletIndex() -> WalletIndex
     
-    /// 保存钱包索引
+    /// Save wallet index
     func saveWalletIndex(_ index: WalletIndex) -> Bool
     
-    /// 添加新钱包
+    /// Add new wallet
     func addWallet(_ wallet: Wallet) -> Bool
     
-    /// 更新钱包
+    /// Update wallet
     func updateWallet(_ wallet: Wallet) -> Bool
     
-    /// 删除钱包
+    /// Delete wallet
     func deleteWallet(walletId: String) -> Bool
     
-    /// 设置活跃钱包
+    /// Set active wallet
     func setActiveWallet(walletId: String) -> Bool
     
-    /// 获取活跃钱包
+    /// Get active wallet
     func getActiveWallet() -> Wallet?
     
-    /// 获取所有钱包
+    /// Get all wallets
     func getAllWallets() -> [Wallet]
     
-    /// 检查钱包是否已存在（通过指纹）
+    /// Check if wallet already exists (by fingerprint)
     func isWalletExists(fingerprint: String) -> (exists: Bool, walletId: String?)
     
-    /// 更新钱包的最大索引
+    /// Update wallet maximum index
     func updateWalletMaxIndex(walletId: String, maxIndex: Int) -> Bool
     
-    /// 钱包索引变化观察者
+    /// Wallet index change observer
     var walletIndexSubject: BehaviorRelay<WalletIndex> { get }
 }
 
-/// 钱包存储服务实现
+/// Wallet storage service implementation
 class WalletStore: WalletStoreProtocol {
     
     private let keychainService: KeychainStorageServiceProtocol
@@ -101,17 +101,17 @@ class WalletStore: WalletStoreProtocol {
     func addWallet(_ wallet: Wallet) -> Bool {
         var index = walletIndexSubject.value
         
-        // 检查是否已存在
+        // Check if already exists
         if let existingWallet = index.wallets.first(where: { $0.id == wallet.id }) {
             Logger.warning("Wallet with id \(wallet.id) already exists")
             return false
         }
         
-        // 添加到索引
+        // Add to index
         index.items[wallet.id] = wallet
         index.order.append(wallet.id)
         
-        // 如果是第一个钱包，设为活跃
+        // If first wallet, set as active
         if index.activeWalletId == nil {
             index.activeWalletId = wallet.id
         }
@@ -139,11 +139,11 @@ class WalletStore: WalletStoreProtocol {
             return false
         }
         
-        // 从索引中删除
+        // Remove from index
         index.items.removeValue(forKey: walletId)
         index.order.removeAll { $0 == walletId }
         
-        // 如果删除的是活跃钱包，选择新的活跃钱包
+        // If deleted wallet is active, select new active wallet
         if index.activeWalletId == walletId {
             index.activeWalletId = index.order.first
         }
@@ -198,7 +198,7 @@ class WalletStore: WalletStoreProtocol {
             return false
         }
         
-        // 创建更新后的钱包
+        // Create updated wallet
         let updatedWallet = Wallet(
             id: wallet.id,
             name: wallet.name,
@@ -218,7 +218,7 @@ class WalletStore: WalletStoreProtocol {
     private func loadWalletIndex() {
         guard let dataString = keychainService.retrieve(key: indexKey),
               let data = Data(base64Encoded: dataString) else {
-            // 如果没有存储的索引，创建默认索引
+            // If no stored index, create default index
             let defaultIndex = WalletIndex()
             walletIndexSubject.accept(defaultIndex)
             return
@@ -229,14 +229,14 @@ class WalletStore: WalletStoreProtocol {
             walletIndexSubject.accept(index)
         } catch {
             Logger.error("Failed to decode wallet index: \(error)")
-            // 创建默认索引
+            // Create default index
             let defaultIndex = WalletIndex()
             walletIndexSubject.accept(defaultIndex)
         }
     }
 }
 
-/// 钱包管理器 - 高级钱包操作
+/// Wallet manager - advanced wallet operations
 class WalletManager {
     
     private let walletStore: WalletStoreProtocol
@@ -254,32 +254,32 @@ class WalletManager {
         self.session = session
     }
     
-    /// 创建新钱包
+    /// Create new wallet
     func createWallet(label: String, password: String) -> Observable<Wallet> {
         return Observable.create { observer in
-            // 生成助记词
+            // Generate mnemonic
             guard let mnemonic = self.generateMnemonic() else {
                 observer.onError(WalletError.unknown)
                 return Disposables.create()
             }
             
-            // 生成种子
+            // Generate seed
             guard let seed = self.mnemonicToSeed(mnemonic) else {
                 observer.onError(WalletError.unknown)
                 return Disposables.create()
             }
             
-            // 生成指纹
+            // Generate fingerprint
             let fingerprint = self.vaultService.generateFingerprint(from: seed)
             
-            // 检查是否已存在
+            // Check if already exists
             let exists = self.walletStore.isWalletExists(fingerprint: fingerprint)
             if exists.exists {
                 observer.onError(WalletError.walletAlreadyExists)
                 return Disposables.create()
             }
             
-            // 创建钱包
+            // Create wallet
             let wallet = Wallet(
                 name: label,
                 address: fingerprint,
@@ -288,7 +288,7 @@ class WalletManager {
                 fingerprint: fingerprint
             )
             
-            // 加密并存储种子
+            // Encrypt and store seed
             guard let encryptedData = self.vaultService.encryptSeed(seed, password: password) else {
                 observer.onError(WalletError.keychainError)
                 return Disposables.create()
@@ -299,7 +299,7 @@ class WalletManager {
                 return Disposables.create()
             }
             
-            // 保存钱包索引
+            // Save wallet index
             guard self.walletStore.addWallet(wallet) else {
                 observer.onError(WalletError.keychainError)
                 return Disposables.create()
@@ -312,28 +312,28 @@ class WalletManager {
         }
     }
     
-    /// 导入钱包
+    /// Import wallet
     func importWallet(mnemonic: String, label: String, password: String) -> Observable<Wallet> {
         return Observable.create { observer in
-            // 验证助记词
+            // Validate mnemonic
             guard self.isValidMnemonic(mnemonic) else {
                 observer.onError(WalletError.invalidMnemonic)
                 return Disposables.create()
             }
             
-            // 生成种子
+            // Generate seed
             guard let seed = self.mnemonicToSeed(mnemonic) else {
                 observer.onError(WalletError.unknown)
                 return Disposables.create()
             }
             
-            // 生成指纹
+            // Generate fingerprint
             let fingerprint = self.vaultService.generateFingerprint(from: seed)
             
-            // 检查是否已存在
+            // Check if already exists
             let exists = self.walletStore.isWalletExists(fingerprint: fingerprint)
             if exists.exists {
-                // 切换到已存在的钱包
+                // Switch to existing wallet
                 if let walletId = exists.walletId {
                     _ = self.walletStore.setActiveWallet(walletId: walletId)
                     if let wallet = self.walletStore.getActiveWallet() {
@@ -346,7 +346,7 @@ class WalletManager {
                 return Disposables.create()
             }
             
-            // 创建新钱包
+            // Create new wallet
             let wallet = Wallet(
                 name: label,
                 address: fingerprint,
@@ -355,7 +355,7 @@ class WalletManager {
                 fingerprint: fingerprint
             )
             
-            // 加密并存储种子
+            // Encrypt and store seed
             guard let encryptedData = self.vaultService.encryptSeed(seed, password: password) else {
                 observer.onError(WalletError.keychainError)
                 return Disposables.create()
@@ -366,7 +366,7 @@ class WalletManager {
                 return Disposables.create()
             }
             
-            // 保存钱包索引
+            // Save wallet index
             guard self.walletStore.addWallet(wallet) else {
                 observer.onError(WalletError.keychainError)
                 return Disposables.create()
@@ -379,25 +379,25 @@ class WalletManager {
         }
     }
     
-    /// 解锁钱包
+    /// Unlock wallet
     func unlockWallet(walletId: String, password: String) -> Observable<Bool> {
         return Observable.create { observer in
-            // 获取加密数据
+            // Get encrypted data
             guard let encryptedData = self.vaultService.getEncryptedWallet(walletId: walletId) else {
                 observer.onError(WalletError.walletNotFound)
                 return Disposables.create()
             }
             
-            // 解密种子
+            // Decrypt seed
             guard let seed = self.vaultService.decryptSeed(encryptedData, password: password) else {
                 observer.onError(WalletError.keychainError)
                 return Disposables.create()
             }
             
-            // 解锁会话
+            // Unlock session
             self.session.unlock(walletId: walletId, seed: seed)
             
-            // 设置为活跃钱包
+            // Set as active wallet
             _ = self.walletStore.setActiveWallet(walletId: walletId)
             
             observer.onNext(true)
@@ -407,7 +407,7 @@ class WalletManager {
         }
     }
     
-    /// 添加新账户
+    /// Add new account
     func addAccount() -> Observable<Account> {
         return Observable.create { observer in
             guard self.session.isUnlocked else {
@@ -425,10 +425,10 @@ class WalletManager {
                 return Disposables.create()
             }
             
-            // 计算新索引（简化实现）
+            // Calculate new index (simplified implementation)
             let newIndex = 1 // 暂时使用固定索引
             
-            // 派生新账户
+            // Derive new account
             let derivationRule = DerivationRule.bip44
             let path = "m/44'/60'/0'/0/\(newIndex)"
             
@@ -438,7 +438,7 @@ class WalletManager {
                 return Disposables.create()
             }
             
-            // 创建新账户
+            // Create new account
             let account = Account(
                 walletId: wallet.id,
                 address: address,
@@ -446,7 +446,7 @@ class WalletManager {
                 index: newIndex
             )
             
-            // 更新钱包的最大索引
+            // Update wallet maximum index
             guard self.walletStore.updateWalletMaxIndex(walletId: wallet.id, maxIndex: newIndex) else {
                 observer.onError(WalletError.keychainError)
                 return Disposables.create()
@@ -459,7 +459,7 @@ class WalletManager {
         }
     }
     
-    /// 获取当前钱包的所有账户
+    /// Get all accounts of current wallet
     func getCurrentWalletAccounts() -> Observable<[Account]> {
         return Observable.create { observer in
             guard self.session.isUnlocked else {
@@ -477,7 +477,7 @@ class WalletManager {
                 return Disposables.create()
             }
             
-            // 派生所有账户
+            // Derive all accounts
             let derivationRule = DerivationRule.bip44
             let accounts = self.derivationService.deriveAccounts(
                 from: seed,
@@ -493,12 +493,12 @@ class WalletManager {
         }
     }
     
-    /// 切换钱包
+    /// Switch wallet
     func switchWallet(walletId: String, password: String) -> Observable<Bool> {
         return unlockWallet(walletId: walletId, password: password)
     }
     
-    /// 锁定钱包
+    /// Lock wallet
     func lockWallet() {
         session.lock()
     }
@@ -506,20 +506,20 @@ class WalletManager {
     // MARK: - Private Methods
     
     private func generateMnemonic() -> String? {
-        // 暂时使用模拟实现
-        // TODO: 替换为真实的 WalletCore 实现
+        // Temporarily use mock implementation
+        // TODO: Replace with real WalletCore implementation
         return "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
     }
     
     private func mnemonicToSeed(_ mnemonic: String) -> Data? {
-        // 暂时使用模拟实现
-        // TODO: 替换为真实的 WalletCore 实现
+        // Temporarily use mock implementation
+        // TODO: Replace with real WalletCore implementation
         return Data(repeating: 0, count: 64) // 模拟种子数据
     }
     
     private func isValidMnemonic(_ mnemonic: String) -> Bool {
-        // 暂时使用简单的验证
-        // TODO: 替换为真实的 WalletCore 实现
+        // Temporarily use simple validation
+        // TODO: Replace with real WalletCore implementation
         let words = mnemonic.components(separatedBy: .whitespaces)
         return words.count == 12
     }

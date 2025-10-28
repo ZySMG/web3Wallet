@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import WalletCore
 
-/// 添加账户视图控制器
+/// Add account view controller
 class AddAccountViewController: UIViewController {
     
     var wallet: Wallet!
@@ -78,36 +78,36 @@ class AddAccountViewController: UIViewController {
         }
         
         NSLayoutConstraint.activate([
-            // 滚动视图约束
+            // Scroll view constraints
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            // 内容视图约束
+            // Content view constraints
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             
-            // 标题约束
+            // Title constraints
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             
-            // 描述约束
+            // Description constraints
             descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
             descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             
-            // 账户名称输入框约束
+            // Account name input field constraints
             accountNameTextField.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 30),
             accountNameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             accountNameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             accountNameTextField.heightAnchor.constraint(equalToConstant: 44),
             
-            // 添加按钮约束
+            // Add button constraints
             addButton.topAnchor.constraint(equalTo: accountNameTextField.bottomAnchor, constant: 30),
             addButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             addButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
@@ -117,7 +117,7 @@ class AddAccountViewController: UIViewController {
     }
     
     private func setupBindings() {
-        // 添加按钮
+        // Add button
         addButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 self?.addAccount()
@@ -137,17 +137,17 @@ class AddAccountViewController: UIViewController {
         
         let accountName = accountNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "Account"
         
-        // 使用助记词派生新账户
+        // Use mnemonic to derive new account
         guard let hdWallet = HDWallet(mnemonic: mnemonic, passphrase: "") else {
             showErrorAlert("Invalid mnemonic")
             return
         }
         
-        // 获取当前钱包的账户数量，用于确定下一个索引
+        // Get current wallet account count to determine next index
         let nextIndex = getNextAccountIndex()
         let derivationPath = "m/44'/60'/0'/0/\(nextIndex)"
         
-        // 派生新账户的私钥和地址
+        // Derive new account private key and address
         let privateKey = hdWallet.getKey(coin: CoinType.ethereum, derivationPath: derivationPath)
         guard let privateKeyObj = PrivateKey(data: privateKey.data) else {
             showErrorAlert("Failed to derive private key")
@@ -157,7 +157,7 @@ class AddAccountViewController: UIViewController {
         let publicKey = privateKeyObj.getPublicKeySecp256k1(compressed: false)
         let address = AnyAddress(publicKey: publicKey, coin: CoinType.ethereum)
         
-        // 创建新账户
+        // Create new account
         let newAccount = WalletAccount(
             id: "\(wallet.address)_\(nextIndex)",
             name: accountName,
@@ -172,20 +172,20 @@ class AddAccountViewController: UIViewController {
     }
     
     private func getNextAccountIndex() -> Int {
-        // ✅ 从WalletManagerSingleton获取当前钱包
+        // ✅ Get current wallet from WalletManagerSingleton
         guard let currentWallet = WalletManagerSingleton.shared.currentWalletSubject.value else {
             return 0 // 如果没有当前钱包，从0开始
         }
         
-        // ✅ 通过通知机制获取该钱包的账户数量
-        // 发送通知请求账户信息
+        // ✅ Get wallet account count through notification mechanism
+        // Send notification to request account information
         let accountCountKey = "accountCount_\(currentWallet.address)"
         let userInfo = ["walletAddress": currentWallet.address]
         
-        // 使用UserDefaults作为临时存储来获取账户数量
+        // Use UserDefaults as temporary storage to get account count
         let accountCount = UserDefaults.standard.integer(forKey: accountCountKey)
         
-        // 如果UserDefaults中没有记录，从0开始
+        // If no record in UserDefaults, start from 0
         return accountCount
     }
     

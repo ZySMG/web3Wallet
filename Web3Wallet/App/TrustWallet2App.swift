@@ -17,29 +17,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        // 设置窗口
+        // Setup window
         window = UIWindow(frame: UIScreen.main.bounds)
         
-        // 创建应用协调器
+        // Create application coordinator
         let navigationController = UINavigationController()
         applicationCoordinator = ApplicationCoordinator(navigationController: navigationController)
         
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
         
-        // 启动协调器
+        // Start coordinator
         applicationCoordinator?.start()
         
         return true
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
-        // 应用进入前台时的处理
+        // Handle app entering foreground
         NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
-        // 应用进入后台时的处理
+        // Handle app entering background
         Logger.info("Application entered background")
     }
 }

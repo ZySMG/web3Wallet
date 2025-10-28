@@ -9,20 +9,20 @@
 import Foundation
 import RxSwift
 
-/// 交易服务协议
+/// Transaction service protocol
 protocol TxServiceProtocol {
     func getTransactionHistory(address: String, network: Network, limit: Int) -> Observable<[Transaction]>
     func getTransactionDetails(hash: String, network: Network) -> Observable<Transaction>
 }
 
-/// Etherscan 交易响应
+/// Etherscan transaction response
 struct EtherscanTxResponse: Codable {
     let status: String
     let message: String
     let result: [EtherscanTransaction]
 }
 
-/// Etherscan 交易数据
+/// Etherscan transaction data
 struct EtherscanTransaction: Codable {
     let blockNumber: String
     let timeStamp: String
@@ -44,10 +44,10 @@ class TxService: TxServiceProtocol {
     private let etherscanV2Service: EtherscanV2Service
     
     init(networkService: NetworkServiceProtocol? = nil) {
-        // ✅ 使用Sepolia的Etherscan API
+        // ✅ Use Sepolia Etherscan API
         self.networkService = networkService ?? NetworkService(baseURL: "https://api-sepolia.etherscan.io/api")
         
-        // ✅ 初始化Etherscan V2服务
+        // ✅ Initialize Etherscan V2 service
         self.etherscanV2Service = EtherscanV2Service(
             apiKey: APIKeys.etherscanSepoliaKey,
             chainId: "11155111", // Sepolia chain ID
@@ -62,7 +62,7 @@ class TxService: TxServiceProtocol {
             return Observable.just([])
         }
         
-        // ✅ 使用Etherscan V2 API
+        // ✅ Use Etherscan V2 API
         return etherscanV2Service.getTransactionHistory(address: address, limit: limit)
     }
     
@@ -132,7 +132,7 @@ class TxService: TxServiceProtocol {
         }
         
         let status: TransactionStatus = tx.isError == "0" ? .success : .failed
-        let direction: TransactionDirection = .outbound // 这里需要根据实际地址判断
+        let direction: TransactionDirection = .outbound // Need to determine based on actual address
         
         return Transaction(
             hash: tx.hash,

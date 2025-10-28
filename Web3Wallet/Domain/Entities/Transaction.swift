@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// 交易状态枚举
+/// Transaction status enum
 enum TransactionStatus: String, CaseIterable, Codable {
     case pending = "pending"
     case success = "success"
@@ -27,7 +27,7 @@ enum TransactionStatus: String, CaseIterable, Codable {
     }
 }
 
-/// 交易方向枚举
+/// Transaction direction enum
 enum TransactionDirection: String, CaseIterable, Codable {
     case inbound = "inbound"  // 接收
     case outbound = "outbound" // 发送
@@ -47,8 +47,8 @@ enum TransactionDirection: String, CaseIterable, Codable {
     }
 }
 
-/// 交易实体
-/// 表示区块链上的交易记录
+/// Transaction entity
+/// Represents transaction records on blockchain
 struct Transaction: Equatable, Codable {
     let hash: String
     let from: String
@@ -63,7 +63,7 @@ struct Transaction: Equatable, Codable {
     let blockNumber: Int?
     let network: Network
     
-    /// 格式化的交易金额
+    /// Formatted transaction amount
     var formattedAmount: String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -76,7 +76,7 @@ struct Transaction: Equatable, Codable {
         return "\(prefix)\(formattedAmount) \(currency.symbol)"
     }
     
-    /// 格式化的时间显示
+    /// Formatted time display
     var formattedTime: String {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
@@ -84,17 +84,17 @@ struct Transaction: Equatable, Codable {
         return formatter.string(from: timestamp)
     }
     
-    /// Explorer 链接
+    /// Explorer link
     var explorerURL: String {
         return "\(network.explorerBase)/tx/\(hash)"
     }
     
-    /// 是否为发送交易
+    /// Whether it's a send transaction
     var isOutbound: Bool {
         return direction == .outbound
     }
     
-    /// 是否为接收交易
+    /// Whether it's a receive transaction
     var isInbound: Bool {
         return direction == .inbound
     }

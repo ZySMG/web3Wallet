@@ -9,13 +9,13 @@
 import Foundation
 import RxSwift
 
-/// Token 服务协议
+/// Token service protocol
 protocol TokenServiceProtocol {
     func getTokenBalance(address: String, tokenAddress: String, network: Network) -> Observable<Decimal>
     func getTokenInfo(tokenAddress: String, network: Network) -> Observable<TokenInfo>
 }
 
-/// Token 信息
+/// Token information
 struct TokenInfo: Codable {
     let address: String
     let symbol: String

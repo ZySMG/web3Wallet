@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-/// 欢迎页面视图控制器
+/// Welcome page view controller
 class WelcomeViewController: UIViewController {
     
     var viewModel: WelcomeViewModel!
@@ -31,41 +31,41 @@ class WelcomeViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = UIColor.systemBackground
         
-        // 配置标题
+        // Configure title
         titleLabel.text = "onboarding.welcome".localized
         titleLabel.font = UIFont.boldSystemFont(ofSize: 32)
         titleLabel.textAlignment = .center
         titleLabel.textColor = UIColor.label
         titleLabel.numberOfLines = 0
         
-        // 配置副标题
+        // Configure subtitle
         subtitleLabel.text = "onboarding.subtitle".localized
         subtitleLabel.font = UIFont.systemFont(ofSize: 18)
         subtitleLabel.textAlignment = .center
         subtitleLabel.textColor = UIColor.secondaryLabel
         subtitleLabel.numberOfLines = 0
         
-        // 配置创建钱包按钮
+        // Configure create wallet button
         createWalletButton.setTitle("onboarding.create_wallet".localized, for: .normal)
         createWalletButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         createWalletButton.backgroundColor = UIColor.systemBlue
         createWalletButton.setTitleColor(.white, for: .normal)
         createWalletButton.layer.cornerRadius = 12
         
-        // 配置导入钱包按钮
+        // Configure import wallet button
         importWalletButton.setTitle("onboarding.import_wallet".localized, for: .normal)
         importWalletButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         importWalletButton.backgroundColor = UIColor.systemGray5
         importWalletButton.setTitleColor(.label, for: .normal)
         importWalletButton.layer.cornerRadius = 12
         
-        // 添加子视图
+        // Add subviews
         [titleLabel, subtitleLabel, createWalletButton, importWalletButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
         
-        // 设置约束
+        // Setup constraints
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             titleLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100),
@@ -89,7 +89,7 @@ class WelcomeViewController: UIViewController {
     }
     
     private func bindViewModel() {
-        // 绑定按钮事件
+        // Bind button events
         createWalletButton.rx.tap
             .bind(to: viewModel.input.createWalletTrigger)
             .disposed(by: disposeBag)
@@ -100,7 +100,7 @@ class WelcomeViewController: UIViewController {
     }
 }
 
-/// 欢迎页面视图模型
+/// Welcome page view model
 class WelcomeViewModel {
     
     struct Input {

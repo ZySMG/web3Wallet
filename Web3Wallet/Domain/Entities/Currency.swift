@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// 货币实体
+/// Currency entity
 /// Define basic information for tokens, including native coins and ERC-20 tokens
 struct Currency: Equatable, Codable {
     let symbol: String

@@ -10,13 +10,13 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-/// 交易历史输入
+/// Transaction history input
 struct TransactionHistoryInput {
     let refreshTrigger = PublishRelay<Void>()
     let transactionSelected = PublishRelay<Transaction>()
 }
 
-/// 交易历史输出
+/// Transaction history output
 struct TransactionHistoryOutput {
     let transactions: Driver<[Transaction]>
     let isLoading: Driver<Bool>
@@ -24,7 +24,7 @@ struct TransactionHistoryOutput {
     let showTransactionDetail: Driver<Transaction>
 }
 
-/// 交易历史视图模型
+/// Transaction history view model
 class TransactionHistoryViewModel {
     
     let input = TransactionHistoryInput()
@@ -34,7 +34,7 @@ class TransactionHistoryViewModel {
     private var wallet: Wallet
     private let fetchTxHistoryUseCase: FetchTxHistoryUseCaseProtocol
     
-    // 内部状态
+    // Internal state
     private let transactionsSubject = BehaviorRelay<[Transaction]>(value: [])
     private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
     private let errorSubject = PublishRelay<Error>()
@@ -43,7 +43,7 @@ class TransactionHistoryViewModel {
         self.wallet = wallet
         self.fetchTxHistoryUseCase = fetchTxHistoryUseCase
         
-        // 创建输出
+        // Create output
         self.output = TransactionHistoryOutput(
             transactions: transactionsSubject.asDriver(),
             isLoading: isLoadingSubject.asDriver(),
@@ -66,7 +66,7 @@ class TransactionHistoryViewModel {
     }
     
     private func setupBindings() {
-        // 刷新触发
+        // Refresh trigger
         input.refreshTrigger
             .subscribe(onNext: { [weak self] in
                 self?.refreshData()
@@ -81,7 +81,7 @@ class TransactionHistoryViewModel {
     private func refreshData() {
         isLoadingSubject.accept(true)
         
-        // 获取交易历史
+        // Get transaction history
         fetchTxHistoryUseCase.fetchTransactionHistory(for: wallet, limit: 50)
             .subscribe(onNext: { [weak self] transactions in
                 self?.transactionsSubject.accept(transactions)
@@ -96,13 +96,13 @@ class TransactionHistoryViewModel {
     // MARK: - Wallet Update
     
     func updateWallet(_ newWallet: Wallet) {
-        // ✅ 更新钱包
+        // ✅ Update wallet
         self.wallet = newWallet
         
-        // ✅ 清空当前交易列表
+        // ✅ Clear current transaction list
         transactionsSubject.accept([])
         
-        // ✅ 重新加载交易历史
+        // ✅ Reload transaction history
         refreshData()
         
         print("🔄 TransactionHistoryViewModel updated for wallet: \(newWallet.address)")

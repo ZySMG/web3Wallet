@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// 偏好设置存储服务协议
+/// Preferences storage service protocol
 protocol PreferencesStorageServiceProtocol {
     func store<T: Codable>(key: String, value: T)
     func retrieve<T: Codable>(key: String, type: T.Type) -> T?
@@ -16,7 +16,7 @@ protocol PreferencesStorageServiceProtocol {
     func exists(key: String) -> Bool
 }
 
-/// 偏好设置存储服务实现
+/// Preferences storage service implementation
 class PreferencesStorageService: PreferencesStorageServiceProtocol {
     
     private let userDefaults: UserDefaults
@@ -54,7 +54,7 @@ class PreferencesStorageService: PreferencesStorageServiceProtocol {
     }
 }
 
-/// 存储键常量
+/// Storage key constants
 struct StorageKeys {
     static let currentWallet = "current_wallet"
     static let selectedNetwork = "selected_network"
