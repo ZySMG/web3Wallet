@@ -31,11 +31,15 @@ extension Decimal {
     }
     
     /// Format as currency display
-    func formatted(decimals: Int = 2, showSymbol: Bool = false, symbol: String = "$") -> String {
+    func formatted(decimals: Int = 2,
+                   minimumFractionDigits: Int? = nil,
+                   showSymbol: Bool = false,
+                   symbol: String = "$") -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        formatter.minimumFractionDigits = 0
-        formatter.maximumFractionDigits = decimals
+        let minFractionDigits = minimumFractionDigits ?? 0
+        formatter.minimumFractionDigits = minFractionDigits
+        formatter.maximumFractionDigits = max(decimals, minFractionDigits)
         formatter.groupingSeparator = ","
         
         let formatted = formatter.string(from: self as NSDecimalNumber) ?? "0"

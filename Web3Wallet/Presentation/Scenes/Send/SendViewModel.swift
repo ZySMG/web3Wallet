@@ -67,7 +67,9 @@ class SendViewModel {
         let gasLimitSubject = BehaviorRelay<String>(value: "Gas Limit: --")
         let feeSubject = BehaviorRelay<String>(value: "Network Fee: --")
         let totalCostSubject = BehaviorRelay<String>(value: "Total Cost: --")
-        let balanceSubject = BehaviorRelay<String>(value: "Balance: 0.000000 \(selectedCurrency.symbol)")
+        let balanceSubject = BehaviorRelay<String>(
+            value: SendViewModel.formattedBalanceText(for: 0, currency: selectedCurrency)
+        )
         let addressValidationSubject = BehaviorRelay<String>(value: "")
         let insufficientBalanceSubject = BehaviorRelay<String>(value: "")
         let errorSubject = PublishRelay<Error>()
@@ -182,7 +184,8 @@ class SendViewModel {
             // Calculate total cost
             if let amount = Decimal(string: self.input.amount.value) {
                 let totalCost = amount + gasEstimate.feeInETH
-                self.totalCostSubject.accept("Total Cost: \(totalCost.rounded(toPlaces: 6)) \(self.selectedCurrency.symbol)")
+                let formattedTotal = SendViewModel.formattedAmount(totalCost)
+                self.totalCostSubject.accept("Total Cost: \(formattedTotal) \(self.selectedCurrency.symbol)")
             }
             
             // Trigger gas countdown
@@ -206,7 +209,9 @@ class SendViewModel {
             let totalCost = amount + gasEstimate.feeInETH
             
             if balance < totalCost {
-                return "Insufficient balance. Need \(totalCost.rounded(toPlaces: 6)) \(self.selectedCurrency.symbol), have \(balance.rounded(toPlaces: 6)) \(self.selectedCurrency.symbol)"
+                let neededAmount = SendViewModel.formattedAmount(totalCost)
+                let availableAmount = SendViewModel.formattedAmount(balance)
+                return "Insufficient balance. Need \(neededAmount) \(self.selectedCurrency.symbol), have \(availableAmount) \(self.selectedCurrency.symbol)"
             } else {
                 return ""
             }
@@ -215,10 +220,17 @@ class SendViewModel {
         .disposed(by: disposeBag)
     }
     
+    private static func formattedAmount(_ amount: Decimal) -> String {
+        return amount
+            .rounded(toPlaces: 6)
+            .formatted(decimals: 6, minimumFractionDigits: 6)
+    }
+    
+    private static func formattedBalanceText(for amount: Decimal, currency: Currency) -> String {
+        return "Balance: \(formattedAmount(amount)) \(currency.symbol)"
+    }
+    
     private func loadWalletBalance() {
-        let appContainer = AppContainer()
-        let ethereumService = appContainer.ethereumService
-        
         ethereumService.getBalance(address: wallet.address, currency: selectedCurrency, network: wallet.network)
             .observe(on: MainScheduler.instance)
             .subscribe(
@@ -226,12 +238,16 @@ class SendViewModel {
                     guard let self = self else { return }
                     
                     self.currentBalanceSubject.accept(balance)
-                    self.balanceSubject.accept("Balance: \(balance.rounded(toPlaces: 6)) \(self.selectedCurrency.symbol)")
+                    self.balanceSubject.accept(
+                        SendViewModel.formattedBalanceText(for: balance, currency: self.selectedCurrency)
+                    )
                 },
                 onError: { [weak self] error in
                     guard let self = self else { return }
                     print("Failed to load balance: \(error)")
-                    self.balanceSubject.accept("Balance: 0.000000 \(self.selectedCurrency.symbol)")
+                    self.balanceSubject.accept(
+                        SendViewModel.formattedBalanceText(for: 0, currency: self.selectedCurrency)
+                    )
                 }
             )
             .disposed(by: disposeBag)

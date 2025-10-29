@@ -10,6 +10,18 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+/// Abstraction over wallet management to support dependency injection
+protocol WalletManaging {
+    var allWalletsDriver: Driver<[Wallet]> { get }
+    var currentWalletDriver: Driver<Wallet?> { get }
+    var allWalletsValue: [Wallet] { get }
+    var currentWalletValue: Wallet? { get }
+    func addWallet(_ wallet: Wallet)
+    func removeWallet(_ wallet: Wallet)
+    func clearAllWallets()
+    func setCurrentWallet(_ wallet: Wallet)
+}
+
 /// Wallet Manager Singleton
 /// Responsible for managing the current active wallet and all wallet lists
 class WalletManagerSingleton {
@@ -196,3 +208,12 @@ class WalletManagerSingleton {
     }
 }
 
+extension WalletManagerSingleton: WalletManaging {
+    var allWalletsValue: [Wallet] {
+        return allWalletsSubject.value
+    }
+    
+    var currentWalletValue: Wallet? {
+        return currentWalletSubject.value
+    }
+}

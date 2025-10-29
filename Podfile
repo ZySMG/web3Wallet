@@ -1,5 +1,5 @@
 source 'https://cdn.cocoapods.org/'
-platform :ios, '14.0'
+platform :ios, '15.0'
 
 target 'trust_wallet2' do
   use_frameworks!
@@ -13,4 +13,21 @@ target 'trust_wallet2' do
   
   # Networking
   pod 'Alamofire', '~> 5.0'
+end
+
+target 'Web3WalletTests' do
+  inherit! :search_paths
+  use_frameworks!
+  pod 'RxSwift', '~> 6.0'
+  pod 'RxCocoa', '~> 6.0'
+  pod 'TrustWalletCore'
+  pod 'Alamofire', '~> 5.0'
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+    end
+  end
 end

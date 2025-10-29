@@ -122,8 +122,8 @@ class CreateWalletViewModel {
     private let disposeBag = DisposeBag()
     private let generateMnemonicUseCase: GenerateMnemonicUseCaseProtocol
     
-    init() {
-        self.generateMnemonicUseCase = GenerateMnemonicUseCase()
+    init(generateMnemonicUseCase: GenerateMnemonicUseCaseProtocol = GenerateMnemonicUseCase()) {
+        self.generateMnemonicUseCase = generateMnemonicUseCase
         
         let showMnemonicSubject = PublishRelay<String>()
         let walletCreatedSubject = PublishRelay<Wallet>()

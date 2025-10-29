@@ -15,10 +15,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
+        guard !AppEnvironment.isRunningUnitTests else {
+            window = UIWindow(frame: UIScreen.main.bounds)
+            window?.rootViewController = UIViewController()
+            window?.makeKeyAndVisible()
+            return true
+        }
+        
         if #available(iOS 13.0, *) {
             // Window setup handled in SceneDelegate for iOS 13+
         } else {
-            // Fallback for legacy systems (not expected with current deployment target)
             let legacyWindow = UIWindow(frame: UIScreen.main.bounds)
             let navigationController = UINavigationController()
             let coordinator = ApplicationCoordinator(navigationController: navigationController)

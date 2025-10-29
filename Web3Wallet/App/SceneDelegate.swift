@@ -13,6 +13,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private var applicationCoordinator: ApplicationCoordinator?
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        guard !AppEnvironment.isRunningUnitTests else {
+            if let windowScene = scene as? UIWindowScene {
+                let window = UIWindow(windowScene: windowScene)
+                window.rootViewController = UIViewController()
+                window.makeKeyAndVisible()
+                self.window = window
+            }
+            return
+        }
+        
         guard let windowScene = scene as? UIWindowScene else { return }
         
         let window = UIWindow(windowScene: windowScene)

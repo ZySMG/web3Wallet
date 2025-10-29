@@ -40,6 +40,8 @@ class WalletManagementViewModel {
     private let keychainStorage: KeychainStorageServiceProtocol
     private let generateMnemonicUseCase: GenerateMnemonicUseCaseProtocol
     private let importWalletUseCase: ImportWalletUseCaseProtocol
+    private let walletManager: WalletManaging
+    private let userDefaults: UserDefaults
     
     // Internal state
     private let walletSectionsSubject = BehaviorRelay<[WalletSection]>(value: [])
@@ -51,11 +53,15 @@ class WalletManagementViewModel {
     
     init(keychainStorage: KeychainStorageServiceProtocol,
          generateMnemonicUseCase: GenerateMnemonicUseCaseProtocol,
-         importWalletUseCase: ImportWalletUseCaseProtocol) {
+         importWalletUseCase: ImportWalletUseCaseProtocol,
+         walletManager: WalletManaging = WalletManagerSingleton.shared,
+         userDefaults: UserDefaults = .standard) {
         
         self.keychainStorage = keychainStorage
         self.generateMnemonicUseCase = generateMnemonicUseCase
         self.importWalletUseCase = importWalletUseCase
+        self.walletManager = walletManager
+        self.userDefaults = userDefaults
         
         self.output = WalletManagementOutput(
             walletSections: walletSectionsSubject.asDriver(),
@@ -122,15 +128,15 @@ class WalletManagementViewModel {
     }
     
     private func setupWalletManagerBindings() {
-        // ✅ Listen to WalletManagerSingleton all wallets changes
-        WalletManagerSingleton.shared.allWalletsDriver
+        // ✅ Listen to wallet manager all wallets changes
+        walletManager.allWalletsDriver
             .drive(onNext: { [weak self] wallets in
                 self?.updateWalletSections(wallets)
             })
             .disposed(by: disposeBag)
         
-        // ✅ Listen to WalletManagerSingleton current wallet changes
-        WalletManagerSingleton.shared.currentWalletDriver
+        // ✅ Listen to wallet manager current wallet changes
+        walletManager.currentWalletDriver
             .drive(onNext: { [weak self] wallet in
                 self?.currentWalletSubject.accept(wallet)
             })
@@ -164,8 +170,8 @@ class WalletManagementViewModel {
     }
     
     private func createWalletSections(from wallets: [Wallet]) -> [WalletSection] {
-        // ✅ Get current wallet directly from WalletManagerSingleton
-        let currentWallet = WalletManagerSingleton.shared.currentWalletSubject.value
+        // ✅ Get current wallet directly from wallet manager
+        let currentWallet = walletManager.currentWalletValue
         
         return wallets.enumerated().map { index, wallet in
             // Get wallet accounts, create default account if none
@@ -221,8 +227,8 @@ class WalletManagementViewModel {
     }
     
     func addWallet(_ wallet: Wallet) {
-        // ✅ Use WalletManagerSingleton to add wallet
-        WalletManagerSingleton.shared.addWallet(wallet)
+        // ✅ Use wallet manager to add wallet
+        walletManager.addWallet(wallet)
     }
     
     func deleteWallet(_ wallet: Wallet) {
@@ -259,11 +265,11 @@ class WalletManagementViewModel {
         
         // ✅ Update account count in UserDefaults
         let accountCountKey = "accountCount_\(walletAddress)"
-        let currentCount = UserDefaults.standard.integer(forKey: accountCountKey)
-        UserDefaults.standard.set(currentCount + 1, forKey: accountCountKey)
+        let currentCount = userDefaults.integer(forKey: accountCountKey)
+        userDefaults.set(currentCount + 1, forKey: accountCountKey)
         
-        // ✅ Use WalletManagerSingleton wallet list to update UI
-        let wallets = WalletManagerSingleton.shared.allWalletsSubject.value
+        // ✅ Use wallet manager wallet list to update UI
+        let wallets = walletManager.allWalletsValue
         let sections = createWalletSections(from: wallets)
         walletSectionsSubject.accept(sections)
     }
@@ -289,8 +295,8 @@ class WalletManagementViewModel {
     }
     
     func clearAllWallets() {
-        // ✅ Use WalletManagerSingleton to clear all wallets
-        WalletManagerSingleton.shared.clearAllWallets()
+        // ✅ Use wallet manager to clear all wallets
+        walletManager.clearAllWallets()
         
         // Clear accounts storage
         accountsStorage.removeAll()
@@ -298,20 +304,20 @@ class WalletManagementViewModel {
     
     func deleteAccount(_ account: WalletAccount) {
         // Find the wallet that contains this account
-        let wallets = WalletManagerSingleton.shared.allWalletsSubject.value
+        let wallets = walletManager.allWalletsValue
         guard let wallet = wallets.first(where: { $0.address == account.walletId }) else {
             print("❌ WalletManagementViewModel: Wallet not found for account \(account.id)")
             return
         }
         
-        // Use WalletManagerSingleton to remove the wallet
-        WalletManagerSingleton.shared.removeWallet(wallet)
+        // Use wallet manager to remove the wallet
+        walletManager.removeWallet(wallet)
         
         // Clear accounts storage for this wallet
         accountsStorage.removeValue(forKey: wallet.address)
         
-        // Update sections from WalletManagerSingleton
-        let updatedWallets = WalletManagerSingleton.shared.allWalletsSubject.value
+        // Update sections from wallet manager
+        let updatedWallets = walletManager.allWalletsValue
         let sections = createWalletSections(from: updatedWallets)
         walletSectionsSubject.accept(sections)
         
@@ -327,8 +333,8 @@ class WalletManagementViewModel {
     }
     
     private func switchToWallet(_ wallet: Wallet) {
-        // ✅ Use WalletManagerSingleton to set current wallet
-        WalletManagerSingleton.shared.setCurrentWallet(wallet)
+        // ✅ Use wallet manager to set current wallet
+        walletManager.setCurrentWallet(wallet)
         
         walletSwitchedSubject.accept(wallet)
     }

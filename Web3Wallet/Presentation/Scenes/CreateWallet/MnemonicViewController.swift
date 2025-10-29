@@ -160,10 +160,10 @@ class MnemonicViewModel {
     private let disposeBag = DisposeBag()
     private let generateWalletUseCase: GenerateMnemonicUseCaseProtocol
     private let mnemonic: String
-    
-    init(mnemonic: String) {
+
+    init(mnemonic: String, generateWalletUseCase: GenerateMnemonicUseCaseProtocol = GenerateMnemonicUseCase()) {
         self.mnemonic = mnemonic
-        self.generateWalletUseCase = GenerateMnemonicUseCase()
+        self.generateWalletUseCase = generateWalletUseCase
         
         let walletCreatedSubject = PublishRelay<Wallet>()
         let errorSubject = PublishRelay<Error>()
@@ -178,8 +178,9 @@ class MnemonicViewModel {
         
         // Bind confirm trigger
         input.confirmTrigger
-            .flatMapLatest { [weak self] _ in
-                self?.generateWalletUseCase.generateWallet(from: mnemonic, network: Network.sepolia) ?? Observable.empty()
+            .flatMapLatest { [weak self] _ -> Observable<Wallet> in
+                guard let self = self else { return Observable<Wallet>.empty() }
+                return self.generateWalletUseCase.generateWallet(from: self.mnemonic, network: Network.sepolia)
             }
             .subscribe(onNext: { wallet in
                 walletCreatedSubject.accept(wallet)
