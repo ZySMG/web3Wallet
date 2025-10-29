@@ -6,29 +6,30 @@
 //
 
 import UIKit
-import RxSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
     private var applicationCoordinator: ApplicationCoordinator?
-    private let disposeBag = DisposeBag()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        // Setup window
-        window = UIWindow(frame: UIScreen.main.bounds)
-        
-        // Create application coordinator
-        let navigationController = UINavigationController()
-        applicationCoordinator = ApplicationCoordinator(navigationController: navigationController)
-        
-        window?.rootViewController = navigationController
-        window?.makeKeyAndVisible()
-        
-        // Start coordinator
-        applicationCoordinator?.start()
+        if #available(iOS 13.0, *) {
+            // Window setup handled in SceneDelegate for iOS 13+
+        } else {
+            // Fallback for legacy systems (not expected with current deployment target)
+            let legacyWindow = UIWindow(frame: UIScreen.main.bounds)
+            let navigationController = UINavigationController()
+            let coordinator = ApplicationCoordinator(navigationController: navigationController)
+            
+            legacyWindow.rootViewController = navigationController
+            legacyWindow.makeKeyAndVisible()
+            
+            window = legacyWindow
+            applicationCoordinator = coordinator
+            coordinator.start()
+        }
         
         return true
     }
@@ -41,5 +42,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Handle app entering background
         Logger.info("Application entered background")
+    }
+    
+    @available(iOS 13.0, *)
+    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        let configuration = UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+        configuration.delegateClass = SceneDelegate.self
+        return configuration
+    }
+    
+    @available(iOS 13.0, *)
+    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
+        // No-op, provided for completeness
     }
 }
