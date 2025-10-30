@@ -62,8 +62,15 @@ class TxService: TxServiceProtocol {
             return Observable.just([])
         }
         
-        // ✅ Use Etherscan V2 API
-        return etherscanV2Service.getTransactionHistory(address: address, limit: limit)
+        let ethTxs = etherscanV2Service.getTransactionHistory(address: address, limit: limit)
+        let tokenTxs = etherscanV2Service.getTokenTransactionHistory(address: address, limit: limit)
+        
+        return Observable
+            .combineLatest(ethTxs, tokenTxs)
+            .map { eth, token in
+                let combined = (eth + token)
+                return combined.sorted(by: { $0.timestamp > $1.timestamp })
+            }
     }
     
     func getTransactionDetails(hash: String, network: Network) -> Observable<Transaction> {
