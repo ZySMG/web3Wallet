@@ -44,10 +44,13 @@ class ApplicationCoordinator: BaseCoordinator {
         onboardingCoordinator.start()
     }
     
-    private func showWalletHome() {
-        // Get current wallet from WalletManagerSingleton
-        guard let wallet = WalletManagerSingleton.shared.currentWalletSubject.value else {
-            // If no wallet, show onboarding flow
+    private func showWalletHome(using walletOverride: Wallet? = nil) {
+        // Prefer explicit wallet, then current wallet, then first stored wallet
+        let wallet = walletOverride
+            ?? WalletManagerSingleton.shared.currentWalletSubject.value
+            ?? WalletManagerSingleton.shared.allWalletsSubject.value.first
+        
+        guard let wallet else {
             showOnboarding()
             return
         }
@@ -92,7 +95,7 @@ class ApplicationCoordinator: BaseCoordinator {
         
         // Switch to wallet home page
         removeAllChildCoordinators()
-        showWalletHome()
+        showWalletHome(using: wallet)
     }
     
     private func handleWalletImported(_ wallet: Wallet?) {
@@ -103,7 +106,7 @@ class ApplicationCoordinator: BaseCoordinator {
         
         // Switch to wallet home page
         removeAllChildCoordinators()
-        showWalletHome()
+        showWalletHome(using: wallet)
     }
     
     private func navigateToWelcome() {
