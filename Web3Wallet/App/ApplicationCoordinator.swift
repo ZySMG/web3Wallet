@@ -22,13 +22,7 @@ class ApplicationCoordinator: BaseCoordinator {
     }
     
     override func start() {
-        // Check if there are existing wallets
-        if WalletManagerSingleton.shared.hasWallets() {
-            showWalletHome()
-        } else {
-            showOnboarding()
-        }
-        
+        showEntrySelection()
         // Listen to wallet creation/import events
         setupWalletNotifications()
     }
@@ -115,5 +109,27 @@ class ApplicationCoordinator: BaseCoordinator {
         
         // Navigate to welcome screen
         showOnboarding()
+    }
+    
+    private func showEntrySelection() {
+        let controller = EntrySelectionViewController()
+        controller.onSelectNative = { [weak self] in
+            guard let self else { return }
+            if WalletManagerSingleton.shared.hasWallets() {
+                self.showWalletHome()
+            } else {
+                self.showOnboarding()
+            }
+        }
+        controller.onSelectReactNative = { [weak self] in
+            self?.showReactNativeGateway()
+        }
+        navigationController.setViewControllers([controller], animated: false)
+    }
+    
+    private func showReactNativeGateway() {
+        let placeholder = ReactNativePlaceholderViewController()
+        placeholder.title = "React Native Wallet"
+        navigationController.pushViewController(placeholder, animated: true)
     }
 }

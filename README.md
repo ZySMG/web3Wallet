@@ -144,19 +144,23 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 
 ## 🧪 Testing
 
+The project ships with a hostless **Web3WalletTests** target covering ViewModel logic, mnemonic workflows, and network/service stubs. Tests run entirely in the simulator so no host application is required.
+
 ### Running Tests
 ```bash
-# Run all tests
-xcodebuild test -workspace trust_wallet2.xcworkspace -scheme trust_wallet2 -destination 'platform=iOS Simulator,name=iPhone 17'
-
-# Run specific test suite
-xcodebuild test -workspace trust_wallet2.xcworkspace -scheme trust_wallet2 -destination 'platform=iOS Simulator,name=iPhone 17' -only-testing:Web3WalletTests/ValidationTests
+xcodebuild test \
+  -workspace trust_wallet2.xcworkspace \
+  -scheme trust_wallet2 \
+  -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.0' \
+  -only-testing:Web3WalletTests
 ```
 
+> 💡 When running on a physical device, configure the Web3WalletTests target with a Test Host (`$(BUILT_PRODUCTS_DIR)/trust_wallet2.app/trust_wallet2`). The default hostless setup is optimized for simulator runs.
+
 ### Test Coverage
-- **Domain Tests**: Business logic validation
-- **ViewModel Tests**: UI logic and reactive bindings
-- **Validation Tests**: Input validation and error handling
+- **ViewModel Tests**: Covers send, receive, welcome, wallet home, and other MVVM flows
+- **Mnemonic & Validator Tests**: Verifies mnemonic generation, import, and validation logic
+- **Network Stubs**: Provides deterministic data for balances, transaction history, and prices
 
 ## 🔒 Security Features
 

@@ -35,15 +35,11 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2A5872532EAE05F10041AC94 /* Web3Wallet */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = Web3Wallet;
 			sourceTree = "<group>";
 		};
 		4C6F6B2555B9A1E6003C1A01 /* Web3WalletTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = Web3WalletTests;
 			sourceTree = "<group>";
 		};
@@ -150,8 +146,8 @@
 				4C6F6B2C55B9A1E6003C1A01 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				4C6F6B2555B9A1E6003C1A01 /* Web3WalletTests */,
 				2A5872532EAE05F10041AC94 /* Web3Wallet */,
+				4C6F6B2555B9A1E6003C1A01 /* Web3WalletTests */,
 			);
 			name = Web3WalletTests;
 			productName = Web3WalletTests;
@@ -173,6 +169,7 @@
 					};
 					4C6F6B2155B9A1E6003C1A01 = {
 						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = 2A5872442EAE05F10041AC94;
 					};
 				};
 			};
@@ -245,9 +242,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-trust_wallet2/Pods-trust_wallet2-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-trust_wallet2/Pods-trust_wallet2-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -284,9 +285,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Web3WalletTests/Pods-Web3WalletTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Web3WalletTests/Pods-Web3WalletTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -517,7 +522,7 @@
 			baseConfigurationReference = 18E288A175174D8372AB14F3 /* Pods-Web3WalletTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				BUNDLE_LOADER = "";
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -538,7 +543,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-                CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -555,6 +560,9 @@
 					"${PODS_CONFIGURATION_BUILD_DIR}/**",
 					"${PODS_ROOT}",
 					"${PODS_ROOT}/**",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+					"$(PLATFORM_DIR)/Developer/Library/PrivateFrameworks",
+					"$(DEVELOPER_DIR)/../SharedFrameworks",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -591,7 +599,7 @@
 				SWIFT_INCLUDE_PATHS = "$(inherited) ${PODS_CONFIGURATION_BUILD_DIR}/Pods_Web3WalletTests";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/trust_wallet2.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/trust_wallet2";
 			};
 			name = Debug;
 		};
@@ -600,7 +608,7 @@
 			baseConfigurationReference = 75259CDE8E575953FBE7735C /* Pods-Web3WalletTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				BUNDLE_LOADER = "";
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -621,7 +629,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-                CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -639,6 +647,9 @@
 					"${PODS_CONFIGURATION_BUILD_DIR}/**",
 					"${PODS_ROOT}",
 					"${PODS_ROOT}/**",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+					"$(PLATFORM_DIR)/Developer/Library/PrivateFrameworks",
+					"$(DEVELOPER_DIR)/../SharedFrameworks",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -674,7 +685,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/trust_wallet2.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/trust_wallet2";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
